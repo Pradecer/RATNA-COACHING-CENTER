@@ -61,7 +61,7 @@ export interface GalleryItem {
   id: string;
   type: 'photo' | 'video';
   url: string;
-  category: 'classroom' | 'event' | 'activity' | 'youtube';
+  category: 'classroom' | 'event' | 'activity' | 'youtube' | 'summercamp';
   title: string;
 }
 
@@ -315,7 +315,37 @@ export const initialData: SiteData = {
     { id: 'g-2', type: 'photo', url: '/gallery-2.jpg', category: 'classroom', title: 'Director Seema Swami Directing Students' },
     { id: 'g-3', type: 'photo', url: '/gallery-3.jpg', category: 'activity', title: 'Classroom Assessment and Study' },
     { id: 'g-4', type: 'photo', url: '/gallery-4.jpg', category: 'activity', title: 'Classroom Layout' },
-    { id: 'g-5', type: 'photo', url: '/gallery-5.jpg', category: 'classroom', title: 'Daily Practice and Classroom Study' }
+    { id: 'g-5', type: 'photo', url: '/gallery-5.jpg', category: 'classroom', title: 'Daily Practice and Classroom Study' },
+
+    // New Classroom Images
+    { id: 'g-classroom-1', type: 'photo', url: '/classroom/classroom1.jpeg', category: 'classroom', title: 'Interactive Learning Session' },
+    { id: 'g-classroom-2', type: 'photo', url: '/classroom/classroom2.jpeg', category: 'classroom', title: 'Group Discussion & Study' },
+    { id: 'g-classroom-3', type: 'photo', url: '/classroom/classroom3.jpeg', category: 'classroom', title: 'Classroom Focused Study' },
+    { id: 'g-classroom-4', type: 'photo', url: '/classroom/claroom4.jpeg', category: 'classroom', title: 'Director Seema Swami Mentoring Students' },
+
+    // New Event Images
+    { id: 'g-event-1', type: 'photo', url: '/event/Diwali1.jpeg', category: 'event', title: 'Diwali Celebration at Center' },
+    { id: 'g-event-2', type: 'photo', url: '/event/Diwali2.jpeg', category: 'event', title: 'Diwali Decorations & Festivities' },
+
+    // New Activity Images
+    { id: 'g-activity-1', type: 'photo', url: '/activites/drwaing1.jpeg', category: 'activity', title: 'Drawing Competition - Student Artwork 1' },
+    { id: 'g-activity-2', type: 'photo', url: '/activites/drawing2.jpeg', category: 'activity', title: 'Drawing Competition - Student Artwork 2' },
+    { id: 'g-activity-3', type: 'photo', url: '/activites/drawing3.jpeg', category: 'activity', title: 'Drawing Competition - Student Artwork 3' },
+    { id: 'g-activity-4', type: 'photo', url: '/activites/drawing4.jpeg', category: 'activity', title: 'Drawing Competition - Student Artwork 4' },
+    { id: 'g-activity-5', type: 'photo', url: '/activites/Food without fire1.jpeg', category: 'activity', title: 'Food Without Fire - Fruit Salads Preparation' },
+    { id: 'g-activity-6', type: 'photo', url: '/activites/Food without fire2.jpeg', category: 'activity', title: 'Food Without Fire - Creative Food Design' },
+    { id: 'g-activity-7', type: 'photo', url: '/activites/Food without fire3.jpeg', category: 'activity', title: 'Food Without Fire - Student Presentations' },
+    { id: 'g-activity-8', type: 'photo', url: '/activites/Food without fire4.jpeg', category: 'activity', title: 'Food Without Fire - Healthy Delicacies' },
+
+    // New Summer Camp Images & Videos
+    { id: 'g-summercamp-v1', type: 'video', url: '/summer camp/dance1.mp4', category: 'summercamp', title: 'Summer Camp Dance Performance - Group A' },
+    { id: 'g-summercamp-v2', type: 'video', url: '/summer camp/dance2.mp4', category: 'summercamp', title: 'Summer Camp Dance Performance - Group B' },
+    { id: 'g-summercamp-v3', type: 'video', url: '/summer camp/dance3.mp4', category: 'summercamp', title: 'Summer Camp Dance Performance - Group C' },
+    { id: 'g-summercamp-p1', type: 'photo', url: '/summer camp/movie_trip1.jpeg', category: 'summercamp', title: 'Summer Camp Movie Outing - Group Photo' },
+    { id: 'g-summercamp-p2', type: 'photo', url: '/summer camp/movie_trip2.jpeg', category: 'summercamp', title: 'Summer Camp Movie Outing - Theater Hall' },
+    { id: 'g-summercamp-p3', type: 'photo', url: '/summer camp/teeth1.jpeg', category: 'summercamp', title: 'Summer Camp Dental Health Checkup - 1' },
+    { id: 'g-summercamp-p4', type: 'photo', url: '/summer camp/teeth2.jpeg', category: 'summercamp', title: 'Summer Camp Dental Health Checkup - 2' },
+    { id: 'g-summercamp-p5', type: 'photo', url: '/summer camp/teeth3.jpeg', category: 'summercamp', title: 'Summer Camp Dental Health Checkup - 3' }
   ],
   testimonials: [
     {
