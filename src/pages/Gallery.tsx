@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSiteData } from '../context/DataContext';
-import { Camera, Video, X, Maximize2, ExternalLink } from 'lucide-react';
+import { Camera, X, Maximize2 } from 'lucide-react';
 
 export const Gallery: React.FC = () => {
   const { data } = useSiteData();
@@ -12,7 +12,6 @@ export const Gallery: React.FC = () => {
   const [activeLightboxImg, setActiveLightboxImg] = useState<{ url: string; title: string } | null>(null);
 
   const photos = data.gallery.filter(item => item.type === 'photo');
-  const videos = data.gallery.filter(item => item.type === 'video');
 
   const filteredPhotos = photos.filter(img => {
     if (photoFilter === 'all') return true;
@@ -29,10 +28,10 @@ export const Gallery: React.FC = () => {
             Media Library
           </span>
           <h1 className="text-4xl md:text-5xl font-bold font-serif text-primary mb-4 leading-tight">
-            Our Gallery & Video Lectures
+            Our Gallery & Classroom Glimpses
           </h1>
           <p className="text-base text-slate-600 font-medium leading-relaxed">
-            Browse snapshots of daily classes, assessments, awards ceremonies, and watch pre-medical biology lecture sessions led by Director Seema Swami.
+            Browse snapshots of daily classes, assessments, awards ceremonies, and interactive pre-medical biology learning sessions led by Director Seema Swami.
           </p>
         </div>
 
@@ -94,57 +93,7 @@ export const Gallery: React.FC = () => {
           </div>
         </div>
 
-        {/* 2. VIDEO LECTURE SECTION (BioMaster Seema YouTube embeds) */}
-        <div className="mb-12">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 pb-5 mb-8">
-            <div>
-              <h2 className="text-2xl font-serif font-bold text-primary flex items-center gap-2">
-                <Video className="text-accent" size={24} />
-                Video Lectures & Tutorials
-              </h2>
-              <span className="text-xs text-slate-400 font-bold block mt-1">Sourced from YouTube Channel: "BioMaster Seema"</span>
-            </div>
-            
-            <a 
-              href="https://youtube.com" 
-              target="_blank" 
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-accent border-b border-primary/20 pb-0.5"
-            >
-              Subscribe on YouTube
-              <ExternalLink size={14} />
-            </a>
-          </div>
 
-          {/* Videos Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {videos.map((vid) => (
-              <div 
-                key={vid.id} 
-                className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm flex flex-col justify-between"
-              >
-                {/* Responsive Iframe container */}
-                <div className="relative aspect-video w-full bg-black">
-                  <iframe 
-                    src={vid.url} 
-                    title={vid.title}
-                    frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowFullScreen
-                    className="absolute inset-0 h-full w-full"
-                  ></iframe>
-                </div>
-                
-                <div className="p-5">
-                  <span className="inline-block px-2 py-0.5 rounded bg-red-50 text-red-700 font-extrabold text-[8px] uppercase tracking-wider">
-                    Biology Tutorial
-                  </span>
-                  <h3 className="font-serif font-bold text-base text-primary mt-1">{vid.title}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* LIGHTBOX MODAL */}
         {activeLightboxImg && (

@@ -20,6 +20,9 @@ import { Blog } from './pages/Blog';
 import { BlogPost } from './pages/BlogPost';
 import { ContactUs } from './pages/ContactUs';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { StudentPortal } from './pages/StudentPortal';
+import { AuthProvider } from './context/AuthContext';
+import { LoginModal } from './components/LoginModal';
 
 const AppContent: React.FC = () => {
   const { path } = useRouter();
@@ -52,6 +55,8 @@ const AppContent: React.FC = () => {
         return <ContactUs />;
       case '/admin':
         return <AdminDashboard />;
+      case '/portal':
+        return <StudentPortal />;
       default:
         // Handle parameterized dynamic paths (like /blog/:slug)
         if (path.startsWith('/blog/')) {
@@ -92,6 +97,7 @@ const AppContent: React.FC = () => {
       </div>
       <Footer />
       <FloatingActions />
+      <LoginModal />
     </div>
   );
 };
@@ -99,9 +105,11 @@ const AppContent: React.FC = () => {
 export function App() {
   return (
     <DataProvider>
-      <RouterProvider>
-        <AppContent />
-      </RouterProvider>
+      <AuthProvider>
+        <RouterProvider>
+          <AppContent />
+        </RouterProvider>
+      </AuthProvider>
     </DataProvider>
   );
 }

@@ -311,14 +311,11 @@ export const initialData: SiteData = {
     }
   ],
   gallery: [
-    { id: 'g-1', type: 'photo', url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=800', category: 'classroom', title: 'Senior Board Batch Study Session' },
-    { id: 'g-2', type: 'photo', url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800', category: 'classroom', title: 'Individual Biology Diagram Practice under Seema Mam' },
-    { id: 'g-3', type: 'photo', url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800', category: 'activity', title: 'Weekly Mock Test Room Layout' },
-    { id: 'g-4', type: 'photo', url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800', category: 'classroom', title: 'Primary Junior Scholars Writing Workshop' },
-    { id: 'g-5', type: 'photo', url: 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800', category: 'event', title: 'Annual Topper felicitation and Awards Ceremony' },
-    { id: 'g-6', type: 'photo', url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800', category: 'activity', title: 'Interactive Science Group Discussion' },
-    { id: 'g-7', type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', category: 'youtube', title: 'Mastering Plant Genetics - BioMaster Seema' },
-    { id: 'g-8', type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', category: 'youtube', title: 'NEET Biology Prep Strategy & Blueprint' }
+    { id: 'g-1', type: 'photo', url: '/gallery-1.jpg', category: 'classroom', title: 'Coaching Class Session' },
+    { id: 'g-2', type: 'photo', url: '/gallery-2.jpg', category: 'classroom', title: 'Director Seema Swami Directing Students' },
+    { id: 'g-3', type: 'photo', url: '/gallery-3.jpg', category: 'activity', title: 'Classroom Assessment and Study' },
+    { id: 'g-4', type: 'photo', url: '/gallery-4.jpg', category: 'activity', title: 'Classroom Layout' },
+    { id: 'g-5', type: 'photo', url: '/gallery-5.jpg', category: 'classroom', title: 'Daily Practice and Classroom Study' }
   ],
   testimonials: [
     {

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSiteData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { 
   Lock, LogOut, FileText, Bell, BookOpen, Award, Users, Mail, Plus, Trash2, CheckCircle2, Edit, Download, Search 
 } from 'lucide-react';
@@ -25,12 +26,19 @@ export const AdminDashboard: React.FC = () => {
   } = useSiteData();
 
   // Authentication State
+  const { isAdmin, loginAdmin, logout: contextLogout } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('ratna_admin_logged') === 'true';
+    return sessionStorage.getItem('ratna_admin_logged') === 'true' || isAdmin;
   });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
+
+  useEffect(() => {
+    if (isAdmin) {
+      setIsAuthenticated(true);
+    }
+  }, [isAdmin]);
 
   // Tab State
   const [activeTab, setActiveTab] = useState<'enquiries' | 'notices' | 'blogs' | 'toppers' | 'resources' | 'messages'>('enquiries');
@@ -74,20 +82,21 @@ export const AdminDashboard: React.FC = () => {
   const [enqStatusFilter, setEnqStatusFilter] = useState('');
 
   // Handle Login
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
-    if (username === 'admin' && password === 'ratna123') {
+    const res = await loginAdmin(username, password);
+    if (res.success) {
       setIsAuthenticated(true);
-      sessionStorage.setItem('ratna_admin_logged', 'true');
     } else {
-      setAuthError('Invalid credentials. Hint: use admin / ratna123');
+      setAuthError('Invalid credentials.');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('ratna_admin_logged');
+    contextLogout();
   };
 
   // CSV Export for Enquiries
@@ -309,10 +318,6 @@ export const AdminDashboard: React.FC = () => {
               Sign In to CMS
             </button>
           </form>
-          
-          <div className="mt-6 text-center text-xs text-slate-400 font-bold border-t border-slate-100 pt-4">
-            Default credentials: <code className="bg-slate-100 px-1 py-0.5 rounded text-primary font-mono">admin</code> / <code className="bg-slate-100 px-1 py-0.5 rounded text-primary font-mono">ratna123</code>
-          </div>
         </div>
       </div>
     );

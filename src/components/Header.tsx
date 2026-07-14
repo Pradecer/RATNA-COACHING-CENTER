@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, Link } from './Router';
-import { Menu, X, GraduationCap, ChevronDown } from 'lucide-react';
+import { Menu, X, GraduationCap, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Header: React.FC = () => {
   const { path } = useRouter();
+  const { student, isAdmin, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -118,12 +120,48 @@ export const Header: React.FC = () => {
 
         {/* CTA & Mobile Controls */}
         <div className="flex items-center gap-3">
-          <Link
-            to="/admissions"
-            className="hidden sm:inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-accent to-accent-hover px-5 py-2.5 text-sm font-bold text-primary-dark shadow-md hover:shadow-lg hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] transition-all"
-          >
-            Apply Now
-          </Link>
+          {student ? (
+            <div className="hidden lg:flex items-center gap-2">
+              <Link
+                to="/portal"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary/5 text-primary text-sm font-bold hover:bg-primary/10 transition-all border border-primary/10"
+              >
+                <User size={15} />
+                Hi, {student.name.split(' ')[0]}
+              </Link>
+              <button
+                onClick={logout}
+                className="p-2.5 text-slate-500 hover:text-red-600 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all cursor-pointer"
+                title="Sign Out"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : isAdmin ? (
+            <div className="hidden lg:flex items-center gap-2">
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary/5 text-primary text-sm font-bold hover:bg-primary/10 transition-all border border-primary/10"
+              >
+                <LayoutDashboard size={15} />
+                CMS Admin
+              </Link>
+              <button
+                onClick={logout}
+                className="p-2.5 text-slate-500 hover:text-red-600 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all cursor-pointer"
+                title="Sign Out"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/admissions"
+              className="hidden sm:inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-accent to-accent-hover px-5 py-2.5 text-sm font-bold text-primary-dark shadow-md hover:shadow-lg hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              Apply Now
+            </Link>
+          )}
           
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -154,20 +192,53 @@ export const Header: React.FC = () => {
               </Link>
             ))}
             <div className="mt-4 border-t border-slate-100 pt-4 flex flex-col gap-2">
-              <Link
-                to="/admissions"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-accent to-accent-hover py-3.5 text-base font-bold text-primary-dark shadow-md"
-              >
-                Apply Now
-              </Link>
-              <Link
-                to="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex w-full items-center justify-center rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-500 hover:bg-slate-50"
-              >
-                Admin Panel Login
-              </Link>
+              {student ? (
+                <>
+                  <Link
+                    to="/portal"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex w-full items-center justify-center rounded-xl bg-primary/5 py-3 text-base font-bold text-primary"
+                  >
+                    Hi, {student.name} (Portal)
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex w-full items-center justify-center rounded-xl border border-red-200 hover:bg-red-50 text-red-600 py-3 text-sm font-semibold cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : isAdmin ? (
+                <>
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex w-full items-center justify-center rounded-xl bg-primary/5 py-3 text-base font-bold text-primary"
+                  >
+                    CMS Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex w-full items-center justify-center rounded-xl border border-red-200 hover:bg-red-50 text-red-600 py-3 text-sm font-semibold cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/admissions"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-accent to-accent-hover py-3.5 text-base font-bold text-primary-dark shadow-md"
+                >
+                  Apply Now
+                </Link>
+              )}
             </div>
           </nav>
         </div>
