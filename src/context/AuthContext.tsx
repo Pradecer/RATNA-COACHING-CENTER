@@ -136,11 +136,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // 3. Save to Supabase
       try {
         await supabase.from('students').insert([{
-          id: studentId,
-          name: name.trim(),
+          student_name: name.trim(),
           email: emailLower,
-          phone: phone.trim(),
-          class_level: classLevel,
+          mobile_number: phone.trim(),
+          target_class: classLevel,
           school_name: schoolName.trim(),
           roll_number: rollNumber,
           password_hash: hashedPassword,
@@ -184,11 +183,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!dbError && dbUsers && dbUsers.length > 0) {
           const u = dbUsers[0];
           const studentProfile: Student = {
-            id: u.id,
-            name: u.name,
+            id: String(u.id),
+            name: u.student_name || u.name || '',
             email: u.email,
-            phone: u.phone || '',
-            classLevel: u.class_level || '',
+            phone: u.mobile_number || u.phone || '',
+            classLevel: u.target_class || u.class_level || '',
             schoolName: u.school_name || '',
             rollNumber: u.roll_number || '',
             joinedDate: u.joined_date || '',
@@ -286,11 +285,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Update in Supabase DB asynchronously
     try {
       await supabase.from('students').update({
-        name: name.trim(),
-        phone: phone.trim(),
+        student_name: name.trim(),
+        mobile_number: phone.trim(),
         school_name: schoolName.trim(),
-        class_level: classLevel
-      }).eq('id', student.id);
+        target_class: classLevel
+      }).eq('email', student.email);
     } catch (e) {
       console.warn('Failed to update student in Supabase:', e);
     }
@@ -333,7 +332,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await supabase.from('students').update({
         score_correct: updatedScore.correct,
         score_attempted: updatedScore.attempted
-      }).eq('id', student.id);
+      }).eq('email', student.email);
     } catch (e) {
       console.warn('Failed to update student score in Supabase:', e);
     }
