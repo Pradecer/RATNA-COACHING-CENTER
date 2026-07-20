@@ -84,7 +84,7 @@ export const LoginModal: React.FC = () => {
             setFormSubmitting(false);
             setIsRegistering(false);
             closeLoginModal();
-            navigate('/portal');
+            navigate('/');
           }, 1200);
         } else {
           setErrorMsg(res.error || 'Registration failed.');
@@ -98,7 +98,7 @@ export const LoginModal: React.FC = () => {
           setTimeout(() => {
             setFormSubmitting(false);
             closeLoginModal();
-            navigate('/portal');
+            navigate('/');
           }, 800);
         } else {
           setErrorMsg(res.error || 'Invalid email or password.');
