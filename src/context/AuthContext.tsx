@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 export interface Student {
   id: string;
@@ -86,24 +87,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     passwordField: string
   ) => {
     try {
+      const emailLower = email.toLowerCase().trim();
+      const hashedPassword = await hashString(passwordField);
+
+      // 1. Check local storage first
       const usersStr = localStorage.getItem(USERS_STORAGE_KEY);
       const users = usersStr ? JSON.parse(usersStr) : [];
-
-      const emailLower = email.toLowerCase().trim();
       if (users.some((u: any) => u.email.toLowerCase() === emailLower)) {
         return { success: false, error: 'An account with this email already exists.' };
+      }
+
+      // 2. Check Supabase DB
+      try {
+        const { data: dbCheck } = await supabase
+          .from('students')
+          .select('email')
+          .eq('email', emailLower);
+        if (dbCheck && dbCheck.length > 0) {
+          return { success: false, error: 'An account with this email already exists in Database.' };
+        }
+      } catch (e) {
+        console.warn('Supabase email check fallback:', e);
       }
 
       // Generate roll number: RATNA-2026-[4-digit-random]
       const randomId = Math.floor(1000 + Math.random() * 9000);
       const rollNumber = `RATNA-2026-${randomId}`;
       const joinedDate = new Date().toISOString().split('T')[0];
-
-      // Cryptographically hash the password before storing in local database
-      const hashedPassword = await hashString(passwordField);
+      const studentId = `stu-${Date.now()}`;
 
       const newStudent: Student = {
-        id: `stu-${Date.now()}`,
+        id: studentId,
         name: name.trim(),
         email: emailLower,
         phone: phone.trim(),
@@ -119,6 +133,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password: hashedPassword
       };
 
+      // 3. Save to Supabase
+      try {
+        await supabase.from('students').insert([{
+          id: studentId,
+          name: name.trim(),
+          email: emailLower,
+          phone: phone.trim(),
+          class_level: classLevel,
+          school_name: schoolName.trim(),
+          roll_number: rollNumber,
+          password_hash: hashedPassword,
+          joined_date: joinedDate,
+          score_correct: 0,
+          score_attempted: 0
+        }]);
+      } catch (dbErr) {
+        console.warn('Could not insert student to Supabase table:', dbErr);
+      }
+
+      // 4. Save to Local Storage
       users.push(newUserAccount);
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
 
@@ -136,11 +170,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginStudent = async (email: string, passwordField: string) => {
     try {
-      const usersStr = localStorage.getItem(USERS_STORAGE_KEY);
-      const users = usersStr ? JSON.parse(usersStr) : [];
-
       const emailLower = email.toLowerCase().trim();
       const hashedPassword = await hashString(passwordField);
+
+      // 1. Try logging in via Supabase first
+      try {
+        const { data: dbUsers, error: dbError } = await supabase
+          .from('students')
+          .select('*')
+          .eq('email', emailLower)
+          .eq('password_hash', hashedPassword);
+
+        if (!dbError && dbUsers && dbUsers.length > 0) {
+          const u = dbUsers[0];
+          const studentProfile: Student = {
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            phone: u.phone || '',
+            classLevel: u.class_level || '',
+            schoolName: u.school_name || '',
+            rollNumber: u.roll_number || '',
+            joinedDate: u.joined_date || '',
+            score: {
+              correct: u.score_correct || 0,
+              attempted: u.score_attempted || 0,
+            }
+          };
+
+          setStudent(studentProfile);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(studentProfile));
+          closeLoginModal();
+          return { success: true };
+        }
+      } catch (e) {
+        console.warn('Supabase login fallback:', e);
+      }
+
+      // 2. Fallback to Local Storage
+      const usersStr = localStorage.getItem(USERS_STORAGE_KEY);
+      const users = usersStr ? JSON.parse(usersStr) : [];
       
       const matchedAccount = users.find(
         (u: any) => u.email.toLowerCase() === emailLower && u.password === hashedPassword
@@ -166,9 +235,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginAdmin = async (usernameField: string, passwordField: string) => {
     try {
-      // Hashed credentials to check against:
-      // admin: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      // ratna123: 5e313469f0389646496f428938ce1c6d0fea2e71ee29b77bb352e0aaef213119
       const userHash = await hashString(usernameField);
       const passHash = await hashString(passwordField);
 
@@ -187,7 +253,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateStudentProfile = (name: string, phone: string, schoolName: string, classLevel: string) => {
+  const updateStudentProfile = async (name: string, phone: string, schoolName: string, classLevel: string) => {
     if (!student) return;
 
     const updatedStudent: Student = {
@@ -201,6 +267,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStudent(updatedStudent);
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedStudent));
 
+    // Update in local storage list
     try {
       const usersStr = localStorage.getItem(USERS_STORAGE_KEY);
       if (usersStr) {
@@ -213,20 +280,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
       }
     } catch (e) {
-      console.error('Failed to update student in master storage', e);
+      console.error('Failed to update student in local storage', e);
+    }
+
+    // Update in Supabase DB asynchronously
+    try {
+      await supabase.from('students').update({
+        name: name.trim(),
+        phone: phone.trim(),
+        school_name: schoolName.trim(),
+        class_level: classLevel
+      }).eq('id', student.id);
+    } catch (e) {
+      console.warn('Failed to update student in Supabase:', e);
     }
   };
 
-  const updateStudentScore = (correctDelta: number, attemptedDelta: number) => {
+  const updateStudentScore = async (correctDelta: number, attemptedDelta: number) => {
     if (!student) return;
 
     const currentScore = student.score || { correct: 0, attempted: 0 };
+    const updatedScore = {
+      correct: currentScore.correct + correctDelta,
+      attempted: currentScore.attempted + attemptedDelta
+    };
+
     const updatedStudent: Student = {
       ...student,
-      score: {
-        correct: currentScore.correct + correctDelta,
-        attempted: currentScore.attempted + attemptedDelta
-      }
+      score: updatedScore
     };
 
     setStudent(updatedStudent);
@@ -238,13 +319,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const users = JSON.parse(usersStr);
         const updatedUsers = users.map((u: any) => 
           u.id === student.id 
-            ? { ...u, score: updatedStudent.score } 
+            ? { ...u, score: updatedScore } 
             : u
         );
         localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
       }
     } catch (e) {
-      console.error('Failed to update student score in master storage', e);
+      console.error('Failed to update student score in local storage', e);
+    }
+
+    // Async update to Supabase
+    try {
+      await supabase.from('students').update({
+        score_correct: updatedScore.correct,
+        score_attempted: updatedScore.attempted
+      }).eq('id', student.id);
+    } catch (e) {
+      console.warn('Failed to update student score in Supabase:', e);
     }
   };
 
@@ -253,7 +344,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAdmin(false);
     localStorage.removeItem(CURRENT_USER_KEY);
     sessionStorage.removeItem(ADMIN_LOGGED_KEY);
-    // Re-open login modal when user explicitly logs out
     setIsLoginModalOpen(true);
   };
 
