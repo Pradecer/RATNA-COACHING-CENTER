@@ -21,9 +21,878 @@
     <!-- Google Fonts preload link tags for performance optimization -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Links to External Styling -->
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#0B2C6B',
+              'primary-dark': '#071D47',
+              'primary-light': '#1E4AA1',
+              accent: '#D4AF37',
+              'accent-hover': '#B8962E',
+              'accent-light': '#F6E6C2',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="bg-slate-50 text-slate-800 antialiased selection:bg-accent selection:text-primary-dark min-h-screen flex flex-col justify-between">
+    
+    <!-- Header/Navigation Section -->
+    <header class="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur-md transition-all">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        
+        <!-- Logo -->
+        <a href="./index.html" class="flex items-center gap-2.5 group">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-light text-accent shadow-md shadow-primary/10 group-hover:scale-105 transition-transform duration-200">
+            <i data-lucide="graduation-cap" class="h-6 w-6 stroke-[1.5]"></i>
+          </div>
+          <div>
+            <div class="font-serif text-xl font-bold tracking-tight text-primary flex items-center gap-1 leading-tight">
+              RATNA
+              <span class="text-xs font-sans font-semibold text-accent px-1.5 py-0.5 rounded bg-primary/5 tracking-wider">
+                CENTRE
+              </span>
+            </div>
+            <p class="text-[10px] tracking-wider text-slate-500 font-semibold uppercase leading-none mt-0.5">
+              Coaching & NEET Prep
+            </p>
+          </div>
+        </a>
+
+                <!-- Desktop Navigation Links -->
+                <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1 text-slate-600 font-semibold">
+          <a href="./index.html" class="px-3 py-2 text-sm rounded-lg text-primary bg-primary/5 transition-colors">Home</a>
+          <a href="./about-us.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">About Us</a>
+          <a href="./courses.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Courses</a>
+          <a href="./subjects.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Subjects</a>
+          <a href="./results-achievements.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Results</a>
+          <a href="./study-resources.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Resources</a>
+          <a href="./blog.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Blog</a>
+          <a href="./contact-us.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Contact</a>
+          
+          <!-- Dropdown container -->
+          <div class="relative dropdown-container">
+            <button id="more-dropdown-btn" onclick="toggleMoreDropdown(event)" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-all flex items-center gap-1 focus:outline-none cursor-pointer">
+              More
+              <i data-lucide="chevron-down" class="h-3.5 w-3.5 transition-transform duration-200" id="more-dropdown-icon"></i>
+            </button>
+            <div id="more-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-slate-100 bg-white p-1.5 shadow-xl ring-1 ring-black/5 z-50">
+              <a href="./facilities.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Facilities</a>
+              <a href="./gallery.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Gallery</a>
+              <a href="./testimonials.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Testimonials</a>
+            </div>
+          </div>
+        </nav>
+
+        <!-- CTA & Session buttons container -->
+        <div class="flex items-center gap-3">
+          <div id="header-actions" class="hidden lg:flex items-center gap-2">
+            <!-- Rendered dynamically by script.js -->
+          </div>
+          <button id="mobile-menu-btn" class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-100 hover:bg-slate-50 text-slate-700 lg:hidden transition-colors" aria-label="Toggle navigation menu">
+            <i data-lucide="menu" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Drawer -->
+      <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white px-4 py-4 shadow-inner">
+        <nav class="flex flex-col gap-1.5">
+          <a href="./index.html" class="px-4 py-3 text-base font-bold rounded-xl text-primary bg-primary/5 border-l-4 border-primary pl-3">Home</a>
+          <a href="./about-us.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">About Us</a>
+          <a href="./courses.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Courses</a>
+          <a href="./subjects.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Subjects</a>
+          <a href="./results-achievements.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Results</a>
+          <a href="./study-resources.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Resources</a>
+          <a href="./blog.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Blog</a>
+          <a href="./contact-us.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Contact</a>
+          <a href="./facilities.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Facilities</a>
+          <a href="./gallery.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Gallery</a>
+          <a href="./testimonials.html" class="px-4 py-3 text-base font-bold rounded-xl text-slate-600 hover:bg-slate-50 hover:text-primary">Testimonials</a>
+          <div class="mt-4 border-t border-slate-100 pt-4 flex flex-col gap-2" id="mobile-actions">
+            <!-- Rendered dynamically by script.js -->
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      
+      <!-- 1. Scrolling Notice Ticker (Dynamic notices) -->
+      <div id="notices-ticker-row" class="hidden bg-gradient-to-r from-primary-dark via-primary to-primary-dark text-white py-2.5 px-4 overflow-hidden relative border-b border-accent/20">
+        <div class="max-w-7xl mx-auto flex items-center gap-3">
+          <span class="flex items-center gap-1 bg-accent text-primary-dark text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex-shrink-0 animate-pulse">
+            <i data-lucide="bell" class="h-3 w-3 fill-current"></i>
+            Notices:
+          </span>
+          <div class="relative overflow-hidden w-full h-5">
+            <div id="notices-marquee-ticker" class="animate-marquee whitespace-nowrap flex items-center gap-12 text-xs font-semibold select-none text-slate-100">
+              <!-- notices synced dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Hero Section -->
+      <section class="relative overflow-hidden bg-gradient-to-b from-primary/10 via-white to-transparent py-16 sm:py-24">
+        <div class="absolute top-12 left-1/2 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/5 blur-3xl"></div>
+        <div class="absolute right-10 bottom-10 -z-10 h-56 w-56 rounded-full bg-primary/5 blur-2xl"></div>
+
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Left block -->
+            <div class="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
+              <div class="inline-flex self-center lg:self-start items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-primary border border-accent/25">
+                <span class="h-1.5 w-1.5 rounded-full bg-accent animate-ping"></span>
+                Admissions Open for Session 2026 - 2027
+              </div>
+
+              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif text-primary leading-tight tracking-tight">
+                Unlock Academic Potential <br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-medium italic">
+                  With Personal Mentorship
+                </span>
+              </h1>
+
+              <p class="text-base sm:text-lg text-slate-600 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                Ratna Coaching Centre offers specialized guidance from Pre-Nursery to Class 12, featuring flagship Biology coaching and NEET foundation classes led by Director Seema Swami.
+              </p>
+
+              <!-- Call Actions -->
+              <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-2">
+                <a href="./admissions.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-hover px-8 py-4 text-base font-bold text-primary-dark shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                  Apply Online Now
+                  <i data-lucide="chevron-right" class="h-5 w-5"></i>
+                </a>
+                
+                <a href="tel:+919217269369" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary text-primary bg-white px-5 py-3.5 text-xs font-extrabold hover:bg-slate-50 transition-all">
+                  <i data-lucide="phone" class="h-3.5 w-3.5"></i>
+                  Call 9217269369
+                </a>
+                
+                <a href="tel:+918860017434" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary text-primary bg-white px-5 py-3.5 text-xs font-extrabold hover:bg-slate-50 transition-all">
+                  <i data-lucide="phone" class="h-3.5 w-3.5"></i>
+                  Call 8860017434
+                </a>
+              </div>
+
+              <!-- Stats metrics row -->
+              <div class="grid grid-cols-3 gap-4 border-t border-slate-100 pt-8 mt-4 text-center lg:text-left max-w-md mx-auto lg:mx-0">
+                <div>
+                  <span class="block text-3xl font-extrabold text-primary font-serif">10+</span>
+                  <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Years Experience</span>
+                </div>
+                <div>
+                  <span class="block text-3xl font-extrabold text-primary font-serif">15</span>
+                  <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Max Class Size</span>
+                </div>
+                <div>
+                  <span class="block text-3xl font-extrabold text-primary font-serif">98%</span>
+                  <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Board Success</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right block: image card overlay badge -->
+            <div class="lg:col-span-5 relative flex justify-center">
+              <div class="relative rounded-3xl p-2.5 bg-gradient-to-br from-primary to-accent shadow-2xl overflow-hidden group">
+                <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=800" alt="Students at Ratna Coaching Centre" class="rounded-2xl h-[360px] sm:h-[420px] w-full object-cover bg-white" />
+                
+                <div class="absolute bottom-6 left-6 right-6 bg-primary/90 backdrop-blur-md border border-white/10 rounded-2xl p-4 text-white">
+                  <h3 class="font-serif font-bold text-base flex items-center gap-1.5">
+                    <i data-lucide="award" class="h-4.5 w-4.5 text-accent"></i>
+                    Individual Biology Specialization
+                  </h3>
+                  <p class="text-xs text-slate-300 font-medium leading-normal mt-1">
+                    Specialized guidance with hand-made genetics notes & NCERT diagram checklists.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Welcome Intro Section -->
+      <section class="py-16 bg-white border-y border-slate-100">
+        <div class="mx-auto max-w-4xl px-4 text-center flex flex-col gap-6">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Welcome to Ratna</span>
+          <h2 class="text-3xl sm:text-4xl font-serif font-bold text-primary">Empowering Future Achievers</h2>
+          <p class="text-slate-600 font-medium text-sm leading-relaxed max-w-3xl mx-auto">
+            Founded with a vision to deliver academic distinction, Ratna Coaching Centre provides tutoring structures that bridge early childhood foundations to competitive boards and NEET readiness. Led by expert educators and Biology mentor Seema Swami, we combine micro-sized classrooms with rigorous assessment models.
+          </p>
+          <div class="flex justify-center gap-4 mt-2">
+            <a href="./about-us.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-accent transition-colors">
+              Read Director's Message
+              <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Flagship Courses Snapshot -->
+      <section class="py-20 bg-slate-50">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-widest text-accent">Academic Tracks</span>
+              <h2 className="text-3xl font-serif font-bold text-primary mt-1">Flagship Study Programs</h2>
+            </div>
+            <a href="./courses.html" class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-accent border-b border-primary/20 pb-0.5 transition-colors">
+              Explore All Courses
+              <i data-lucide="chevron-right" class="h-3.5 w-3.5"></i>
+            </a>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Offering 1 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between hover:shadow-md hover:scale-[1.01] transition-all">
+              <div class="absolute top-0 right-0 bg-accent text-primary-dark font-extrabold text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-bl-xl shadow-sm">Flagship Offering</div>
+              <div class="flex flex-col gap-4 mt-2">
+                <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
+                  <i data-lucide="graduation-cap" class="h-5.5 w-5.5 text-primary"></i>
+                </div>
+                <div>
+                  <h3 class="font-serif font-bold text-lg text-primary">Biology (Individual Coaching)</h3>
+                  <span class="text-[10px] font-bold text-slate-400 block mt-0.5">Eligibility: Class 10 and Class 12 Students</span>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed font-semibold">Specialized one-to-one tutoring sessions led by Seema Swami. Focuses on genetics matrices anatomy drawing, and CBSE boards writing.</p>
+              </div>
+              <div class="border-t border-slate-100 pt-4 mt-6 flex justify-between items-center">
+                <div>
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none">Timing Slot</span>
+                  <span class="text-[11px] font-bold text-slate-700 block mt-1">Morning: 10:00 AM – 12:00 PM</span>
+                </div>
+                <a href="./admissions.html?course=Biology%20(Individual%20Coaching)" class="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-accent hover:text-primary-dark shadow-sm transition-all" title="Enquire Now">
+                  <i data-lucide="chevron-right" class="h-4 w-4 stroke-[2.5]"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Offering 2 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between hover:shadow-md hover:scale-[1.01] transition-all">
+              <div class="absolute top-0 right-0 bg-accent text-primary-dark font-extrabold text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-bl-xl shadow-sm">Flagship Offering</div>
+              <div class="flex flex-col gap-4 mt-2">
+                <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
+                  <i data-lucide="graduation-cap" class="h-5.5 w-5.5 text-primary"></i>
+                </div>
+                <div>
+                  <h3 class="font-serif font-bold text-lg text-primary">NEET Foundation</h3>
+                  <span class="text-[10px] font-bold text-slate-400 block mt-0.5">Eligibility: Classes 9 to 12 Students</span>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed font-semibold">Pre-medical stream preparation. Speeds up OMR MCQ accuracy, NCERT diagram recall, and high-yield chapters revision.</p>
+              </div>
+              <div class="border-t border-slate-100 pt-4 mt-6 flex justify-between items-center">
+                <div>
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none">Timing Slot</span>
+                  <span class="text-[11px] font-bold text-slate-700 block mt-1">Evening: 6:00 PM – 8:00 PM</span>
+                </div>
+                <a href="./admissions.html?course=NEET%20Foundation" class="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-accent hover:text-primary-dark shadow-sm transition-all" title="Enquire Now">
+                  <i data-lucide="chevron-right" class="h-4 w-4 stroke-[2.5]"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Offering 3 (School Prep) -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md hover:scale-[1.01] transition-all">
+              <div class="flex flex-col gap-4">
+                <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
+                  <i data-lucide="users" class="h-5.5 w-5.5 text-primary"></i>
+                </div>
+                <div>
+                  <h3 class="font-serif font-bold text-lg text-primary">Pre-Nursery to Class 12</h3>
+                  <span class="text-[10px] font-bold text-slate-400 block mt-0.5">Comprehensive School Coaching</span>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed font-semibold">Complete batch classes covering all board subjects, homework support checklists, Vedic math lessons, and periodic unit test reviews.</p>
+              </div>
+              <div class="border-t border-slate-100 pt-4 mt-6 flex justify-between items-center">
+                <div>
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none">Evening Batches</span>
+                  <span class="text-[11px] font-bold text-slate-700 block mt-1">3:00 PM – 8:00 PM</span>
+                </div>
+                <a href="./courses.html" class="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-accent hover:text-primary-dark shadow-sm transition-all">
+                  <i data-lucide="chevron-right" class="h-4 w-4 stroke-[2.5]"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- 5. Why Choose Us -->
+      <section class="py-20 bg-white">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Institutional Edge</span>
+            <h2 class="text-3xl font-serif font-bold text-primary mt-1">Why Choose Ratna Coaching</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-accent hover:bg-white hover:shadow-md transition-all duration-300">
+              <div class="h-9 w-9 rounded-xl bg-primary text-accent flex items-center justify-center mb-4">
+                <i data-lucide="users" class="h-5 w-5 text-accent"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Small Batches</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Limited to 15 students per batch to track individual notebooks and writing patterns.</p>
+            </div>
+            
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-accent hover:bg-white hover:shadow-md transition-all duration-300">
+              <div class="h-9 w-9 rounded-xl bg-primary text-accent flex items-center justify-center mb-4">
+                <i data-lucide="award" class="h-5 w-5 text-accent"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Proven Results</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Stunning district board records and premium MBBS NEET qualifiers.</p>
+            </div>
+
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-accent hover:bg-white hover:shadow-md transition-all duration-300">
+              <div class="h-9 w-9 rounded-xl bg-primary text-accent flex items-center justify-center mb-4">
+                <i data-lucide="user-check" class="h-5 w-5 text-accent"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Experienced Faculty</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Syllabus delivered by subject specialists and expert board counselors.</p>
+            </div>
+
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-accent hover:bg-white hover:shadow-md transition-all duration-300">
+              <div class="h-9 w-9 rounded-xl bg-primary text-accent flex items-center justify-center mb-4">
+                <i data-lucide="help-circle" class="h-5 w-5 text-accent"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Doubt Sessions</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Daily 30-minute custom revision slots before and after regular lectures.</p>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- 6. Operational Timetable slots -->
+      <section class="py-20 bg-slate-50 border-y border-slate-100">
+        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs font-bold uppercase tracking-widest text-accent">Active Batch Timings</span>
+            <h2 class="text-3xl font-serif font-bold text-primary mt-1">Operational Timings & Batch Slots</h2>
+          </div>
+
+          <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="bg-primary py-4 px-6 text-white text-sm font-bold flex items-center gap-2">
+              <i data-lucide="clock" class="h-4.5 w-4.5 text-accent"></i>
+              Academic Class Timetable slots
+            </div>
+            
+            <div class="p-6 flex flex-col gap-6">
+              
+              <!-- Slot 1 -->
+              <div>
+                <h3 class="text-sm font-bold text-primary mb-3 uppercase tracking-wider border-l-4 border-accent pl-2.5">
+                  Morning (Individual Coaching) — Mon–Sat
+                </h3>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left border border-slate-100 text-xs font-semibold">
+                    <thead>
+                      <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[9px] border-b border-slate-100">
+                        <th class="py-3 px-4 w-1/3">Time Slot</th>
+                        <th class="py-3 px-4">Subject & Fees Description</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                      <tr>
+                        <td class="py-4 px-4 font-bold text-slate-800 align-top">10:00 AM – 12:00 PM</td>
+                        <td class="py-4 px-4">
+                          <ul class="list-disc pl-4 space-y-1 text-slate-600 font-medium">
+                            <li>Class 10 Biology</li>
+                            <li>Class 12 Biology</li>
+                            <li>One-to-One Individual Coaching</li>
+                            <li class="font-bold text-primary">Fee: ₹500 per hour</li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Slot 2 -->
+              <div>
+                <h3 class="text-sm font-bold text-primary mb-3 uppercase tracking-wider border-l-4 border-accent pl-2.5">
+                  Evening Batch — Mon–Sat
+                </h3>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left border border-slate-100 text-xs font-semibold">
+                    <thead>
+                      <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[9px] border-b border-slate-100">
+                        <th class="py-3 px-4 w-1/3">Time Slot</th>
+                        <th class="py-3 px-4">Subject & Batch Description</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                      <tr>
+                        <td class="py-4 px-4 font-bold text-slate-800 align-top">3:00 PM – 6:00 PM</td>
+                        <td class="py-4 px-4">
+                          <ul class="list-disc pl-4 space-y-1 text-slate-600 font-medium">
+                            <li class="font-bold text-slate-800">Pre-Nursery to Class 8</li>
+                            <li>All Subjects</li>
+                            <li>Small Batch Classes</li>
+                          </ul>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-4 px-4 font-bold text-slate-800 align-top">6:00 PM – 8:00 PM</td>
+                        <td class="py-4 px-4">
+                          <ul class="list-disc pl-4 space-y-1 text-slate-600 font-medium">
+                            <li class="font-bold text-slate-800">Classes 9–12</li>
+                            <li>Mathematics, Science, Biology, Physics, Chemistry</li>
+                            <li>Board Exam Preparation</li>
+                            <li>Foundation Courses</li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="text-center font-bold text-[10px] text-slate-400 mt-2 border-t border-slate-50 pt-4">
+                * Weekly Off: Sunday (Closed). Timing details verified by the management team.
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- 7. Toppers achieved grid -->
+      <section class="py-20 bg-white">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Wall of Fame</span>
+              <h2 class="text-3xl font-serif font-bold text-primary mt-1">Toppers & Achievements</h2>
+            </div>
+            <a href="./results-achievements.html" class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-accent border-b border-primary/20 pb-0.5 transition-colors">
+              View All Results
+              <i data-lucide="chevron-right" class="h-3.5 w-3.5"></i>
+            </a>
+          </div>
+
+          <div id="home-toppers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Dynamic toppers insert -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 8. Notice Board Announcements Box -->
+      <section class="py-20 bg-slate-50 border-t border-slate-100">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6">
+          <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-5 mb-6">
+              <h2 class="text-2xl font-bold font-serif text-primary flex items-center gap-2">
+                <i data-lucide="bell" class="h-5.5 w-5.5 text-accent"></i>
+                Latest Announcements
+              </h2>
+              <a href="./blog.html" class="text-xs font-bold text-primary hover:text-accent flex items-center gap-0.5">
+                View Notice Board
+                <i data-lucide="chevron-right" class="h-3.5 w-3.5"></i>
+              </a>
+            </div>
+            
+            <div id="home-announcements-box" class="flex flex-col gap-6">
+              <!-- Announcements loaded dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. Interactive Reviews Slide -->
+      <section id="home-testimonials-section" class="py-20 bg-primary text-white border-b-2 border-accent relative overflow-hidden">
+        <div class="absolute top-10 right-10 opacity-5 -z-10 text-white">
+          <i data-lucide="star" class="h-48 w-48 fill-current"></i>
+        </div>
+        
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 text-center flex flex-col items-center">
+          <span class="text-xs font-bold uppercase tracking-widest text-accent mb-2">Parents & Students Reviews</span>
+          <h2 class="text-3xl font-serif font-bold mb-10">What People Say About Ratna</h2>
+
+          <div id="home-testimonial-content" class="min-h-[220px] flex flex-col justify-center items-center max-w-2xl">
+            <!-- dynamic text slider -->
+          </div>
+
+          <!-- dots indicator -->
+          <div id="home-testimonial-dots" class="flex gap-2.5 mt-8"></div>
+        </div>
+      </section>
+
+      <!-- 10. Blog & Gallery Double Snippet Grid -->
+      <section class="py-20 bg-slate-50">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Blog list row -->
+            <div>
+              <div class="flex justify-between items-end mb-6">
+                <h3 class="text-xl font-serif font-bold text-primary flex items-center gap-1.5">
+                  <i data-lucide="book-open" class="h-5 w-5 text-accent"></i>
+                  Academic Articles
+                </h3>
+                <a href="./blog.html" class="text-xs font-bold text-primary hover:text-accent">Read All</a>
+              </div>
+              <div id="home-blog-list" class="flex flex-col gap-4">
+                <!-- loaded dynamically -->
+              </div>
+            </div>
+
+            <!-- Gallery preview list -->
+            <div>
+              <div class="flex justify-between items-end mb-6">
+                <h3 class="text-xl font-serif font-bold text-primary flex items-center gap-1.5">
+                  <i data-lucide="calendar" class="h-5 w-5 text-accent"></i>
+                  Institute Gallery
+                </h3>
+                <a href="./gallery.html" class="text-xs font-bold text-primary hover:text-accent">View Gallery</a>
+              </div>
+              <div id="home-gallery-grid" class="grid grid-cols-3 gap-3">
+                <!-- loaded dynamically -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. Campus visitor strip map -->
+      <section class="py-12 bg-white border-t border-slate-100">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-slate-50 border border-slate-100 p-6 sm:p-8 rounded-3xl">
+            
+            <div class="md:col-span-8 flex flex-col gap-4">
+              <h3 class="text-xl font-serif font-bold text-primary flex items-center gap-1.5">
+                <i data-lucide="phone" class="h-4.5 w-4.5 text-accent animate-bounce"></i>
+                Want to visit our campus center?
+              </h3>
+              <p class="text-xs text-slate-500 font-bold leading-relaxed">
+                2115 Ground Floor, Sector 9, Near Nandan Park, Ballabgarh, Faridabad (121004). Operational daily with direct counselor help. Feel free to call us or drop a WhatsApp note for batch checkouts.
+              </p>
+              <div class="flex flex-wrap gap-4 text-xs font-bold text-slate-700">
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="check-circle" class="h-3.5 w-3.5 text-accent"></i>
+                  Morning Individual: 10AM-12PM
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="check-circle" class="h-3.5 w-3.5 text-accent"></i>
+                  Evening School Prep: 3PM-8PM
+                </span>
+              </div>
+            </div>
+
+            <div class="md:col-span-4 flex justify-end">
+              <a href="./contact-us.html" class="w-full md:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary text-white font-bold text-xs px-6 py-3.5 hover:bg-primary-light transition-all shadow-md">
+                Get Directions
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Area Section -->
+    <footer class="bg-primary text-slate-100 border-t-2 border-accent">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-white/10">
+          
+          <!-- Column 1 -->
+          <div class="flex flex-col gap-4">
+            <a href="./index.html" class="flex items-center gap-2 group text-white">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-primary shadow-md">
+                <i data-lucide="graduation-cap" class="h-6 w-6 stroke-[2]"></i>
+              </div>
+              <div>
+                <span class="font-serif text-lg font-bold tracking-tight block">RATNA COACHING</span>
+                <span class="text-[10px] tracking-widest text-accent font-sans font-semibold uppercase leading-none">Centre of Excellence</span>
+              </div>
+            </a>
+            <p class="text-sm text-slate-300 leading-relaxed font-medium">
+              Providing premium academic mentoring from Pre-Nursery to Class 12, specialized Class 10 & 12 Biology coaching, and NEET Foundation programs.
+            </p>
+            <div class="flex items-center gap-3.5 mt-2">
+              <a href="https://youtube.com/@BioMasterSeema" target="_blank" class="h-9 w-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-accent hover:text-primary transition-all text-slate-300" title="Subscribe on YouTube">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.107C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.388.511a3.002 3.002 0 0 0-2.11 2.107C0 8.048 0 12 0 12s0 3.951.502 5.837a3.003 3.003 0 0 0 2.11 2.107c1.883.511 9.388.511 9.388.511s7.505 0 9.388-.511a3.003 3.003 0 0 0 2.11-2.107C24 15.951 24 12 24 12s0-3.952-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
+              <a href="https://wa.me/919217269369" target="_blank" class="h-9 w-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-accent hover:text-primary transition-all text-slate-300" title="Chat on WhatsApp">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.588 1.97 14.118.945 11.997.945c-5.442 0-9.87 4.372-9.874 9.802-.002 2.016.529 3.987 1.538 5.734l-.993 3.626 3.73-.974.249.148z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="flex flex-col gap-4 md:pl-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Quick Links</h3>
+            <ul class="flex flex-col gap-2.5 text-sm font-semibold text-slate-300">
+              <li><a href="./about-us.html" class="hover:text-accent transition-colors">Our Story & Mission</a></li>
+              <li><a href="./courses.html" class="hover:text-accent transition-colors">All Courses Offered</a></li>
+              <li><a href="./subjects.html" class="hover:text-accent transition-colors">Subject Overviews</a></li>
+              <li><a href="./facilities.html" class="hover:text-accent transition-colors">Our Learning Facilities</a></li>
+              <li><a href="./results-achievements.html" class="hover:text-accent transition-colors">Toppers & Results</a></li>
+              <li><a href="./gallery.html" class="hover:text-accent transition-colors">Photo & Video Gallery</a></li>
+              <li><a href="./testimonials.html" class="hover:text-accent transition-colors">Student Testimonials</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="flex flex-col gap-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Contact Details</h3>
+            <ul class="flex flex-col gap-3.5 text-sm font-semibold text-slate-300">
+              <li class="flex gap-2.5 items-start">
+                <i data-lucide="map-pin" class="text-accent flex-shrink-0 mt-0.5 h-4.5 w-4.5"></i>
+                <span>2115 Ground Floor, Sector 9, Near Nandan Park, Ballabgarh, Faridabad (121004)</span>
+              </li>
+              <li class="flex gap-2.5 items-start">
+                <i data-lucide="phone" class="text-accent flex-shrink-0 mt-0.5 h-4.5 w-4.5"></i>
+                <div class="flex flex-col gap-1.5">
+                  <a href="tel:+919217269369" class="hover:text-accent transition-colors">+91 92172 69369</a>
+                  <a href="tel:+918860017434" class="hover:text-accent transition-colors">+91 88600 17434</a>
+                </div>
+              </li>
+              <li class="flex gap-2.5 items-center">
+                <i data-lucide="mail" class="text-accent flex-shrink-0 h-4.5 w-4.5"></i>
+                <a href="mailto:info@ratnacoachingcentre.in" class="hover:text-accent transition-colors">info@ratnacoachingcentre.in</a>
+              </li>
+              <li class="flex gap-2.5 items-start">
+                <i data-lucide="clock" class="text-accent flex-shrink-0 mt-0.5 h-4.5 w-4.5"></i>
+                <div class="text-xs">
+                  <span class="block font-bold text-slate-200">Mon – Sat: 10:00 AM – 8:00 PM</span>
+                  <span class="block text-slate-400 font-medium">Sunday: Closed</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 4 -->
+          <div class="flex flex-col gap-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Newsletter</h3>
+            <p class="text-xs text-slate-300 leading-relaxed font-semibold">Subscribe to receive updates on admissions schedules, exam dates, study checklists, and mock test timetables.</p>
+            <form onclick="alert('Thank you for subscribing to our newsletter!')" class="flex flex-col gap-2">
+              <div class="relative">
+                <input type="email" required placeholder="Enter email address" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-semibold transition-all" />
+                <button type="submit" class="absolute right-1.5 top-1.5 h-8 w-8 rounded-lg bg-accent text-primary flex items-center justify-center hover:scale-105 transition-transform" aria-label="Subscribe">
+                  <i data-lucide="arrow-right" class="h-4 w-4 stroke-[2.5] text-primary"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs font-semibold text-slate-400">
+          <p>© 2026 Ratna Coaching Centre. All rights reserved.</p>
+          <div class="flex items-center gap-4">
+            <a href="./admin.html" class="hover:text-slate-300 transition-colors">CMS Staff Login</a>
+            <span>|</span>
+            <span class="flex items-center gap-1">Developed with <span class="text-red-500 font-bold text-sm">♥</span> for Premium Quality</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+            <!-- Global Student & Admin Auth Login Modal Overlay Container -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeLoginModal()"></div>
+
+      <div class="relative w-full max-w-md bg-white rounded-3xl p-7 shadow-2xl border border-slate-100 overflow-hidden z-10 animate-in zoom-in-95 duration-200">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-accent to-primary-light"></div>
+
+        <div class="text-center mb-6 mt-2">
+          <h2 class="text-2xl font-bold font-serif text-primary leading-tight">Ratna Coaching Center</h2>
+          <p class="text-xs text-slate-400 font-semibold mt-1">Please log in to access classes and worksheets</p>
+        </div>
+
+        <!-- Role tab selectors -->
+        <div class="flex bg-slate-100 p-1 rounded-xl mb-5">
+          <button id="tab-login-btn" onclick="showAuthMode('student-login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-white text-primary shadow-sm focus:outline-none">
+            <i data-lucide="user" class="h-3.5 w-3.5"></i>
+            Student Login
+          </button>
+          <button id="tab-admin-btn" onclick="showAuthMode('admin-login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 focus:outline-none">
+            <i data-lucide="lock" class="h-3.5 w-3.5"></i>
+            Admin CMS
+          </button>
+        </div>
+
+        <!-- alert display -->
+        <div id="login-error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-xs font-bold mb-4 flex items-center gap-2"></div>
+
+        <!-- PANES -->
+        
+        <!-- PANE 1: STUDENT LOGIN -->
+        <div id="student-login-pane" class="flex flex-col gap-4">
+          <form id="student-login-form" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Email Address</label>
+              <div class="relative">
+                <i data-lucide="mail" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="email" id="login-email" required placeholder="student@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Password</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="password" id="login-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Sign In to Student Portal
+            </button>
+            
+            <div class="text-center text-xs font-semibold text-slate-500 mt-2">
+              New student? <button type="button" onclick="showAuthMode('student-register')" class="text-primary-light hover:underline font-bold focus:outline-none">Register details</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANE 2: STUDENT REGISTER -->
+        <div id="student-register-pane" class="hidden flex flex-col gap-4">
+          <form id="student-register-form" class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Student Name</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="text" id="reg-name" required placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Email Address</label>
+              <div class="relative">
+                <i data-lucide="mail" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="email" id="reg-email" required placeholder="example@mail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Mobile Number</label>
+              <div class="relative">
+                <i data-lucide="phone" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="tel" id="reg-phone" required maxLength="10" placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Target Class</label>
+                <select id="reg-class" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary">
+                  <option value="Class 9">Class 9</option>
+                  <option value="Class 10">Class 10</option>
+                  <option value="Class 11">Class 11</option>
+                  <option value="Class 12">Class 12</option>
+                  <option value="NEET Prep">Class 12</option> <!-- To match screenshot 2 'Class 12' default -->
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">School Name</label>
+                <div class="relative">
+                  <i data-lucide="school" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="text" id="reg-school" required placeholder="School name" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Password</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="password" id="reg-password" required placeholder="Password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Confirm Password</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="password" id="reg-confirm-password" required placeholder="Retype password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Register Student Account
+            </button>
+            
+            <div class="text-center text-xs font-semibold text-slate-500 mt-2">
+              Already have an account? <button type="button" onclick="showAuthMode('student-login')" class="text-primary-light hover:underline font-bold focus:outline-none">Login here</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANE 3: ADMIN LOGIN -->
+        <div id="admin-login-pane" class="hidden flex flex-col gap-4">
+          <form id="admin-login-form" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Username</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="text" id="admin-username" required placeholder="Enter username" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Password</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="password" id="admin-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                <button type="button" onclick="togglePasswordVisibility('admin-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Sign In to CMS Portal
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Script triggers -->
+    <script src="./script.js"></script>
+    <script>
+      // Load icons
+      lucide.createIcons();
+    </script>
   </body>
 </html>

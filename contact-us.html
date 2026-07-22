@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📞</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Contact Us | Ratna Coaching Centre</title>
+    <meta name="description" content="Reach out to Ratna Coaching Centre in Sector 9, Ballabgarh, Faridabad. Find our maps location, phone contacts, and drop message inputs." />
+    
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#0B2C6B',
+              'primary-dark': '#071D47',
+              'primary-light': '#1E4AA1',
+              accent: '#D4AF37',
+              'accent-hover': '#B8962E',
+              'accent-light': '#F6E6C2',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur-md transition-all">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <a href="./index.html" class="flex items-center gap-2.5 group">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-light text-accent shadow-md group-hover:scale-105 transition-transform duration-200">
+            <i data-lucide="graduation-cap" class="h-6 w-6 stroke-[1.5]"></i>
+          </div>
+          <div>
+            <div class="font-serif text-xl font-bold tracking-tight text-primary flex items-center gap-1 leading-tight">
+              RATNA <span class="text-xs font-sans font-semibold text-accent px-1.5 py-0.5 rounded bg-primary/5 tracking-wider">CENTRE</span>
+            </div>
+            <p class="text-[10px] tracking-wider text-slate-500 font-semibold uppercase leading-none mt-0.5">Coaching & NEET Prep</p>
+          </div>
+        </a>
+                <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1 text-slate-600 font-semibold">
+          <a href="./index.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Home</a>
+          <a href="./about-us.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">About Us</a>
+          <a href="./courses.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Courses</a>
+          <a href="./subjects.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Subjects</a>
+          <a href="./results-achievements.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Results</a>
+          <a href="./study-resources.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Resources</a>
+          <a href="./blog.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Blog</a>
+          <a href="./contact-us.html" class="px-3 py-2 text-sm rounded-lg text-primary bg-primary/5 transition-colors">Contact</a>
+          
+          <!-- Dropdown container -->
+          <div class="relative dropdown-container">
+            <button id="more-dropdown-btn" onclick="toggleMoreDropdown(event)" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-all flex items-center gap-1 focus:outline-none cursor-pointer">
+              More
+              <i data-lucide="chevron-down" class="h-3.5 w-3.5 transition-transform duration-200" id="more-dropdown-icon"></i>
+            </button>
+            <div id="more-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-slate-100 bg-white p-1.5 shadow-xl ring-1 ring-black/5 z-50">
+              <a href="./facilities.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Facilities</a>
+              <a href="./gallery.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Gallery</a>
+              <a href="./testimonials.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Testimonials</a>
+            </div>
+          </div>
+        </nav>
+        <div class="flex items-center gap-3">
+          <div id="header-actions" class="hidden lg:flex items-center gap-2"></div>
+          <button id="mobile-menu-btn" class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-100 hover:bg-slate-50 text-slate-700 lg:hidden" aria-label="Toggle menu">
+            <i data-lucide="menu" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+      <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white px-4 py-4 shadow-inner font-sans">
+        <nav class="flex flex-col gap-1.5 font-bold text-slate-600">
+          <a href="./index.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Home</a>
+          <a href="./about-us.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">About Us</a>
+          <a href="./courses.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Courses</a>
+          <a href="./subjects.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Subjects</a>
+          <a href="./results-achievements.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Results</a>
+          <a href="./study-resources.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Resources</a>
+          <a href="./blog.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Blog</a>
+          <a href="./contact-us.html" class="px-4 py-3 text-base rounded-xl text-primary bg-primary/5 border-l-4 border-primary pl-3 font-bold">Contact</a>
+          <a href="./facilities.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Facilities</a>
+          <a href="./gallery.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Gallery</a>
+          <a href="./testimonials.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Testimonials</a>
+          <div class="mt-4 border-t border-slate-100 pt-4 flex flex-col gap-2" id="mobile-actions"></div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow py-12">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        <!-- Page Title -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <span class="text-xs font-bold uppercase tracking-widest text-accent px-3 py-1 rounded-full bg-primary/10 inline-block mb-3">Get In Touch</span>
+          <h1 class="text-4xl md:text-5xl font-bold font-serif text-primary mb-4 leading-tight">Contact Our Team</h1>
+          <p class="text-base text-slate-600 font-medium leading-relaxed font-sans">Have questions about class batches, monthly test reports, or admissions details? Submit a message below or call us directly.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-6xl mx-auto">
+          
+          <!-- Column 1: Info Cards -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+            
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-start gap-4">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+                <i data-lucide="map-pin" class="h-5 w-5 text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-serif font-bold text-base text-primary">Center Address</h4>
+                <p class="text-xs text-slate-500 font-semibold leading-relaxed mt-1">2115 Ground Floor, Sector 9, Near Nandan Park, Ballabgarh, Faridabad (121004)</p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-start gap-4">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+                <i data-lucide="phone" class="h-5 w-5 text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-serif font-bold text-base text-primary">Phone Helplines</h4>
+                <div class="flex flex-col gap-1 text-xs text-slate-500 font-bold mt-1">
+                  <a href="tel:+919217269369" class="hover:text-primary">+91 92172 69369</a>
+                  <a href="tel:+918860017434" class="hover:text-primary">+91 88600 17434</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-start gap-4">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+                <i data-lucide="mail" class="h-5 w-5 text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-serif font-bold text-base text-primary">Email Support</h4>
+                <a href="mailto:info@ratnacoachingcentre.in" class="text-xs text-slate-500 font-bold hover:text-primary block mt-1">info@ratnacoachingcentre.in</a>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-start gap-4">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+                <i data-lucide="clock" class="h-5 w-5 text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-serif font-bold text-base text-primary">Operational Hours</h4>
+                <div class="text-xs text-slate-500 font-semibold leading-relaxed mt-1">
+                  <span class="block">Monday – Saturday: 10:00 AM – 8:00 PM</span>
+                  <span class="block font-bold text-red-500">Sunday: Closed</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Message inputs & Map -->
+          <div class="lg:col-span-7 flex flex-col gap-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-sm relative">
+              <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary to-accent"></div>
+              
+              <div id="contact-status-box" class="hidden mb-6"></div>
+
+              <form id="contact-form" class="flex flex-col gap-5">
+                <h3 class="font-serif text-lg font-bold text-primary mb-2">Send Us a Message</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-700">Full Name *</label>
+                    <input type="text" id="contact-name" required placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-700">Email Address *</label>
+                    <input type="email" id="contact-email" required placeholder="example@mail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-700">Mobile Number *</label>
+                    <input type="tel" id="contact-phone" required maxLength="10" placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-700">Subject Inquiry *</label>
+                    <select id="contact-subject" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary">
+                      <option value="General Batch Inquiry">General Batch Inquiry</option>
+                      <option value="Individual Biology Specialization">Individual Biology Specialization</option>
+                      <option value="NEET Foundation Tracks">NEET Foundation Tracks</option>
+                      <option value="Feedback / Complaints">Feedback / Complaints</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-xs font-bold text-slate-700">Message Text *</label>
+                  <textarea id="contact-message" required rows="4" placeholder="Detail your queries..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 text-xs">
+                  Send Message
+                </button>
+              </form>
+            </div>
+
+            <!-- Map Iframe embed card -->
+            <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm h-[320px]">
+              <iframe 
+                src="https://maps.google.com/maps?q=2115%20Ground%20Floor,%20Sector%209,%20Near%20Nandan%20Park,%20Ballabgarh,%20Faridabad%20(121004)&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                width="100%" 
+                height="100%" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Ratna Coaching Centre Google Map"
+              ></iframe>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-slate-100 border-t-2 border-accent">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-white/10">
+          <div class="flex flex-col gap-4">
+            <a href="./index.html" class="flex items-center gap-2 group text-white">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-primary shadow-md">
+                <i data-lucide="graduation-cap" class="h-6 w-6 stroke-[2]"></i>
+              </div>
+              <div>
+                <span class="font-serif text-lg font-bold tracking-tight block">RATNA COACHING</span>
+                <span class="text-[10px] tracking-widest text-accent font-sans font-semibold uppercase leading-none">Centre of Excellence</span>
+              </div>
+            </a>
+            <p class="text-sm text-slate-300 leading-relaxed font-medium">Providing premium academic mentoring from Pre-Nursery to Class 12, specialized Class 10 & 12 Biology coaching, and NEET Foundation programs.</p>
+          </div>
+          <div class="flex flex-col gap-4 md:pl-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Quick Links</h3>
+            <ul class="flex flex-col gap-2.5 text-sm font-semibold text-slate-300">
+              <li><a href="./about-us.html" class="hover:text-accent">Our Story & Mission</a></li>
+              <li><a href="./courses.html" class="hover:text-accent">All Courses Offered</a></li>
+              <li><a href="./subjects.html" class="hover:text-accent">Subject Overviews</a></li>
+            </ul>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Contact Details</h3>
+            <ul class="flex flex-col gap-3.5 text-sm font-semibold text-slate-300">
+              <li class="flex gap-2.5 items-start">
+                <i data-lucide="map-pin" class="text-accent flex-shrink-0 mt-0.5 h-4.5 w-4.5"></i>
+                <span>2115 Ground Floor, Sector 9, Near Nandan Park, Ballabgarh, Faridabad (121004)</span>
+              </li>
+            </ul>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Newsletter</h3>
+            <p class="text-xs text-slate-300 leading-relaxed font-semibold">Subscribe to receive updates on admissions schedules, exam dates, and mock test timetables.</p>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs font-semibold text-slate-400">
+          <p>© 2026 Ratna Coaching Centre. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+        <!-- Global Student & Admin Auth Login Modal Overlay Container -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeLoginModal()"></div>
+
+      <div class="relative w-full max-w-md bg-white rounded-3xl p-7 shadow-2xl border border-slate-100 overflow-hidden z-10 animate-in zoom-in-95 duration-200">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-accent to-primary-light"></div>
+
+        <div class="text-center mb-6 mt-2">
+          <h2 class="text-2xl font-bold font-serif text-primary leading-tight">Ratna Coaching Center</h2>
+          <p class="text-xs text-slate-400 font-semibold mt-1">Please log in to access classes and worksheets</p>
+        </div>
+
+        <!-- Role tab selectors -->
+        <div class="flex bg-slate-100 p-1 rounded-xl mb-5">
+          <button id="tab-login-btn" onclick="showAuthMode('student-login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-white text-primary shadow-sm focus:outline-none">
+            <i data-lucide="user" class="h-3.5 w-3.5"></i>
+            Student Login
+          </button>
+          <button id="tab-admin-btn" onclick="showAuthMode('admin-login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 focus:outline-none">
+            <i data-lucide="lock" class="h-3.5 w-3.5"></i>
+            Admin CMS
+          </button>
+        </div>
+
+        <!-- alert display -->
+        <div id="login-error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-xs font-bold mb-4 flex items-center gap-2"></div>
+
+        <!-- PANES -->
+        
+        <!-- PANE 1: STUDENT LOGIN -->
+        <div id="student-login-pane" class="flex flex-col gap-4">
+          <form id="student-login-form" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Email Address</label>
+              <div class="relative">
+                <i data-lucide="mail" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="email" id="login-email" required placeholder="student@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Password</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="password" id="login-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Sign In to Student Portal
+            </button>
+            
+            <div class="text-center text-xs font-semibold text-slate-500 mt-2">
+              New student? <button type="button" onclick="showAuthMode('student-register')" class="text-primary-light hover:underline font-bold focus:outline-none">Register details</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANE 2: STUDENT REGISTER -->
+        <div id="student-register-pane" class="hidden flex flex-col gap-4">
+          <form id="student-register-form" class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Student Name</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="text" id="reg-name" required placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Email Address</label>
+              <div class="relative">
+                <i data-lucide="mail" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="email" id="reg-email" required placeholder="example@mail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Mobile Number</label>
+              <div class="relative">
+                <i data-lucide="phone" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="tel" id="reg-phone" required maxLength="10" placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Target Class</label>
+                <select id="reg-class" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary">
+                  <option value="Class 9">Class 9</option>
+                  <option value="Class 10">Class 10</option>
+                  <option value="Class 11">Class 11</option>
+                  <option value="Class 12">Class 12</option>
+                  <option value="NEET Prep">Class 12</option> <!-- To match screenshot 2 'Class 12' default -->
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">School Name</label>
+                <div class="relative">
+                  <i data-lucide="school" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="text" id="reg-school" required placeholder="School name" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Password</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="password" id="reg-password" required placeholder="Password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Confirm Password</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="password" id="reg-confirm-password" required placeholder="Retype password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Register Student Account
+            </button>
+            
+            <div class="text-center text-xs font-semibold text-slate-500 mt-2">
+              Already have an account? <button type="button" onclick="showAuthMode('student-login')" class="text-primary-light hover:underline font-bold focus:outline-none">Login here</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANE 3: ADMIN LOGIN -->
+        <div id="admin-login-pane" class="hidden flex flex-col gap-4">
+          <form id="admin-login-form" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Username</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="text" id="admin-username" required placeholder="Enter username" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Password</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="password" id="admin-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                <button type="button" onclick="togglePasswordVisibility('admin-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Sign In to CMS Portal
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

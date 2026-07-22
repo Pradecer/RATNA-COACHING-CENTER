@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>About Us | Ratna Coaching Centre</title>
+    <meta name="description" content="Learn about our founders, educational values, and the pedagogical principles that drive academic excellence at Ratna Coaching Centre." />
+    
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#0B2C6B',
+              'primary-dark': '#071D47',
+              'primary-light': '#1E4AA1',
+              accent: '#D4AF37',
+              'accent-hover': '#B8962E',
+              'accent-light': '#F6E6C2',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur-md transition-all">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <a href="./index.html" class="flex items-center gap-2.5 group">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-light text-accent shadow-md group-hover:scale-105 transition-transform duration-200">
+            <i data-lucide="graduation-cap" class="h-6 w-6 stroke-[1.5]"></i>
+          </div>
+          <div>
+            <div class="font-serif text-xl font-bold tracking-tight text-primary flex items-center gap-1 leading-tight">
+              RATNA <span class="text-xs font-sans font-semibold text-accent px-1.5 py-0.5 rounded bg-primary/5 tracking-wider">CENTRE</span>
+            </div>
+            <p class="text-[10px] tracking-wider text-slate-500 font-semibold uppercase leading-none mt-0.5">Coaching & NEET Prep</p>
+          </div>
+        </a>
+                <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1 text-slate-600 font-semibold">
+          <a href="./index.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Home</a>
+          <a href="./about-us.html" class="px-3 py-2 text-sm rounded-lg text-primary bg-primary/5 transition-colors">About Us</a>
+          <a href="./courses.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Courses</a>
+          <a href="./subjects.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Subjects</a>
+          <a href="./results-achievements.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Results</a>
+          <a href="./study-resources.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Resources</a>
+          <a href="./blog.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Blog</a>
+          <a href="./contact-us.html" class="px-3 py-2 text-sm rounded-lg hover:text-primary hover:bg-slate-50 transition-colors">Contact</a>
+          
+          <!-- Dropdown container -->
+          <div class="relative dropdown-container">
+            <button id="more-dropdown-btn" onclick="toggleMoreDropdown(event)" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-all flex items-center gap-1 focus:outline-none cursor-pointer">
+              More
+              <i data-lucide="chevron-down" class="h-3.5 w-3.5 transition-transform duration-200" id="more-dropdown-icon"></i>
+            </button>
+            <div id="more-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-slate-100 bg-white p-1.5 shadow-xl ring-1 ring-black/5 z-50">
+              <a href="./facilities.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Facilities</a>
+              <a href="./gallery.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Gallery</a>
+              <a href="./testimonials.html" class="block px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors">Testimonials</a>
+            </div>
+          </div>
+        </nav>
+        <div class="flex items-center gap-3">
+          <div id="header-actions" class="hidden lg:flex items-center gap-2"></div>
+          <button id="mobile-menu-btn" class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-100 hover:bg-slate-50 text-slate-700 lg:hidden" aria-label="Toggle menu">
+            <i data-lucide="menu" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+      <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white px-4 py-4 shadow-inner">
+        <nav class="flex flex-col gap-1.5 font-bold text-slate-600">
+          <a href="./index.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Home</a>
+          <a href="./about-us.html" class="px-4 py-3 text-base rounded-xl text-primary bg-primary/5 border-l-4 border-primary pl-3">About Us</a>
+          <a href="./courses.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Courses</a>
+          <a href="./subjects.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Subjects</a>
+          <a href="./results-achievements.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Results</a>
+          <a href="./study-resources.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Resources</a>
+          <a href="./blog.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Blog</a>
+          <a href="./contact-us.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Contact</a>
+          <a href="./facilities.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Facilities</a>
+          <a href="./gallery.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Gallery</a>
+          <a href="./testimonials.html" class="px-4 py-3 text-base rounded-xl hover:bg-slate-50 hover:text-primary">Testimonials</a>
+          <div class="mt-4 border-t border-slate-100 pt-4 flex flex-col gap-2" id="mobile-actions"></div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow py-12">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        <!-- Page Title -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <span class="text-xs font-bold uppercase tracking-widest text-accent px-3 py-1 rounded-full bg-primary/10 inline-block mb-3">Since 2016</span>
+          <h1 class="text-4xl md:text-5xl font-bold font-serif text-primary mb-4 leading-tight">About Ratna Coaching Centre</h1>
+          <p class="text-base text-slate-600 font-medium leading-relaxed">Learn about our founders, our educational values, and the pedagogical principles that drive academic excellence.</p>
+        </div>
+
+        <!-- 1. Story & Timeline -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20 bg-white p-6 sm:p-10 rounded-3xl border border-slate-100 shadow-sm">
+          <div>
+            <h2 class="text-3xl font-serif font-bold text-primary mb-6">Our Journey</h2>
+            <div class="flex flex-col gap-6 text-sm text-slate-600 font-semibold leading-relaxed">
+              <p>Established in 2016, Ratna Coaching Centre began as a specialized home-coaching setup for board students. Recognizing a local lack of conceptual clarity in mathematics and science education, we structured a curriculum focused on small groupings, standard evaluation checkups, and robust homework supports.</p>
+              <p>In 2019, our flagship individual coaching in Biology and NEET Foundation tracks was introduced. Designed by Seema Swami, this curriculum focuses on NCERT diagram drawing mastery, short-hand genetics notes, and memory hooks to conquer exam pressure.</p>
+              <p>Today, the centre supports over 200 students annually from Pre-Nursery to Class 12, serving as a trusted brand for local parents demanding academic rigor combined with a supportive mentoring atmosphere.</p>
+            </div>
+          </div>
+          <div class="relative rounded-3xl p-2.5 bg-gradient-to-br from-primary to-accent shadow-lg overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" alt="Coaching classroom timeline" class="rounded-2xl h-[320px] w-full object-cover bg-white" />
+          </div>
+        </div>
+
+        <!-- 2. Mission & Vision -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+          <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 left-0 bottom-0 w-1.5 bg-accent"></div>
+            <div class="h-10 w-10 rounded-xl bg-accent/15 text-primary flex items-center justify-center mb-5">
+              <i data-lucide="target" class="text-primary-light h-5 w-5"></i>
+            </div>
+            <h3 class="text-2xl font-bold font-serif text-primary mb-4">Our Mission</h3>
+            <p class="text-sm text-slate-600 font-semibold leading-relaxed">To eliminate academic stress through structured conceptual teaching, building robust foundations for board success and medical careers in a customized, micro-classroom environment.</p>
+          </div>
+
+          <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 left-0 bottom-0 w-1.5 bg-primary"></div>
+            <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+              <i data-lucide="book-open" class="text-primary h-5 w-5"></i>
+            </div>
+            <h3 class="text-2xl font-bold font-serif text-primary mb-4">Our Vision</h3>
+            <p class="text-sm text-slate-600 font-semibold leading-relaxed">To emerge as the premier regional center for pre-medical biology preparation while maintaining our warm, familial support for early childhood foundations and school support metrics.</p>
+          </div>
+        </div>
+
+        <!-- 3. Director Message -->
+        <div class="bg-white rounded-3xl p-6 sm:p-12 shadow-sm border border-slate-100 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center mb-20 relative overflow-hidden">
+          <div class="absolute top-0 right-0 h-40 w-40 bg-accent/5 rounded-bl-full -z-10"></div>
+          
+          <div class="lg:col-span-4 flex flex-col items-center">
+            <div class="relative p-1.5 bg-gradient-to-br from-primary to-accent rounded-2xl shadow-md">
+              <img src="./assets/director.png" alt="Director Seema Swami" class="h-[280px] w-[240px] object-cover rounded-xl bg-white" />
+            </div>
+            <h4 class="font-serif font-bold text-lg text-primary mt-4 mb-0.5">Seema Swami</h4>
+            <span class="text-xs font-bold text-accent">Director & Biology Head</span>
+            <span class="text-[10px] text-slate-400 font-extrabold uppercase mt-1">BioMaster Seema (YouTube)</span>
+          </div>
+
+          <div class="lg:col-span-8 flex flex-col gap-5">
+            <span class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Director's Message</span>
+            <h3 class="text-3xl font-serif font-bold text-primary leading-tight">"Focusing on logical diagrams over dry textbook memorization."</h3>
+            <div class="flex flex-col gap-4 text-xs font-semibold text-slate-600 leading-relaxed">
+              <p>In biology preparation, students often make the mistake of reading textbooks passively. When facing boards or NEET exams, they struggle with diagrammatic labels and keyword precision. My teaching methodology bridges this gap.</p>
+              <p>Through hand-drawn genetics flowcharts, interactive memory matrices, and a library of 100+ high-yield CBSE biology diagrams, we train students to approach exams logically. Our mock series uses negative-marking OMR countdowns to simulate true medical entry speeds.</p>
+              <p>For our junior school scholars, we implement conceptual vocabulary games, Vedic maths shortcuts, and daily worksheet guides. We ensure their homework is finished with absolute clarity, eliminating parental anxiety.</p>
+              <p class="italic font-bold text-primary text-sm mt-2">"I invite you to schedule a visit to our center, attend a sample assessment session, and see how our small batch design alters learning trajectories."</p>
+            </div>
+            <div class="flex items-center gap-4 mt-2">
+              <a href="https://youtube.com/@BioMasterSeema" target="_blank" class="inline-flex items-center gap-2 rounded-xl bg-red-600 text-white px-5 py-2.5 text-xs font-bold shadow-md hover:bg-red-700 transition-colors">
+                Watch BioMaster YouTube Lectures
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Expanded Pillars -->
+        <div>
+          <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Academic Philosophy</span>
+            <h2 class="text-3xl font-serif font-bold text-primary mt-1">Our Core Pillars</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+                <i data-lucide="user" class="text-primary-light h-5 w-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Experienced Faculty</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed font-sans">Our subject experts have over a decade of experience guiding board exam formats and competitive entry syllabuses.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+                <i data-lucide="target" class="text-primary-light h-5 w-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Small Batch Size</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">We strictly maintain a limit of 15 students per batch to ensure each notebook is individually reviewed.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+                <i data-lucide="award" class="text-primary-light h-5 w-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Proven Results</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Year after year, our students set district toppers benchmarks and secure medical seats in premium government colleges.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+                <i data-lucide="heart" class="text-primary-light h-5 w-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Individual Attention</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Custom study outlines and pacing are provided to help slower learners recover conceptual confidence.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+                <i data-lucide="compass" class="text-primary-light h-5 w-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Modern Methods</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">We translate complex biological concepts into flowcharts, visual checklists, and physical models.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all">
+              <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+                <i data-lucide="shield-check" class="text-primary-light h-5 w-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Parent Sync</h3>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed">Regular mock results graphs, performance statistics, and counseling slots are held to sync progress.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-slate-100 border-t-2 border-accent">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-white/10">
+          
+          <div class="flex flex-col gap-4">
+            <a href="./index.html" class="flex items-center gap-2 group text-white">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-primary shadow-md">
+                <i data-lucide="graduation-cap" class="h-6 w-6 stroke-[2]"></i>
+              </div>
+              <div>
+                <span class="font-serif text-lg font-bold tracking-tight block">RATNA COACHING</span>
+                <span class="text-[10px] tracking-widest text-accent font-sans font-semibold uppercase leading-none">Centre of Excellence</span>
+              </div>
+            </a>
+            <p class="text-sm text-slate-300 leading-relaxed font-medium">Providing premium academic mentoring from Pre-Nursery to Class 12, specialized Class 10 & 12 Biology coaching, and NEET Foundation programs.</p>
+          </div>
+
+          <div class="flex flex-col gap-4 md:pl-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Quick Links</h3>
+            <ul class="flex flex-col gap-2.5 text-sm font-semibold text-slate-300">
+              <li><a href="./about-us.html" class="hover:text-accent">Our Story & Mission</a></li>
+              <li><a href="./courses.html" class="hover:text-accent">All Courses Offered</a></li>
+              <li><a href="./subjects.html" class="hover:text-accent">Subject Overviews</a></li>
+              <li><a href="./facilities.html" class="hover:text-accent">Our Learning Facilities</a></li>
+              <li><a href="./results-achievements.html" class="hover:text-accent">Toppers & Results</a></li>
+              <li><a href="./gallery.html" class="hover:text-accent">Photo & Video Gallery</a></li>
+              <li><a href="./testimonials.html" class="hover:text-accent">Student Testimonials</a></li>
+            </ul>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Contact Details</h3>
+            <ul class="flex flex-col gap-3.5 text-sm font-semibold text-slate-300">
+              <li class="flex gap-2.5 items-start">
+                <i data-lucide="map-pin" class="text-accent flex-shrink-0 mt-0.5 h-4.5 w-4.5"></i>
+                <span>2115 Ground Floor, Sector 9, Near Nandan Park, Ballabgarh, Faridabad (121004)</span>
+              </li>
+              <li class="flex gap-2.5 items-start">
+                <i data-lucide="phone" class="text-accent flex-shrink-0 mt-0.5 h-4.5 w-4.5"></i>
+                <div class="flex flex-col gap-1.5">
+                  <a href="tel:+919217269369" class="hover:text-accent transition-colors">+91 92172 69369</a>
+                  <a href="tel:+918860017434" class="hover:text-accent transition-colors">+91 88600 17434</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <h3 class="font-serif text-base font-semibold text-accent tracking-wider uppercase">Newsletter</h3>
+            <p class="text-xs text-slate-300 leading-relaxed font-semibold">Subscribe to receive updates on admissions schedules, exam dates, study checklists, and mock test timetables.</p>
+          </div>
+
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs font-semibold text-slate-400">
+          <p>© 2026 Ratna Coaching Centre. All rights reserved.</p>
+          <div class="flex items-center gap-4">
+            <a href="./admin.html" class="hover:text-slate-300 transition-colors">CMS Staff Login</a>
+            <span>|</span>
+            <span class="flex items-center gap-1">Developed with <span class="text-red-500 font-bold text-sm">♥</span> for Premium Quality</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+        <!-- Global Student & Admin Auth Login Modal Overlay Container -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeLoginModal()"></div>
+
+      <div class="relative w-full max-w-md bg-white rounded-3xl p-7 shadow-2xl border border-slate-100 overflow-hidden z-10 animate-in zoom-in-95 duration-200">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-accent to-primary-light"></div>
+
+        <div class="text-center mb-6 mt-2">
+          <h2 class="text-2xl font-bold font-serif text-primary leading-tight">Ratna Coaching Center</h2>
+          <p class="text-xs text-slate-400 font-semibold mt-1">Please log in to access classes and worksheets</p>
+        </div>
+
+        <!-- Role tab selectors -->
+        <div class="flex bg-slate-100 p-1 rounded-xl mb-5">
+          <button id="tab-login-btn" onclick="showAuthMode('student-login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-white text-primary shadow-sm focus:outline-none">
+            <i data-lucide="user" class="h-3.5 w-3.5"></i>
+            Student Login
+          </button>
+          <button id="tab-admin-btn" onclick="showAuthMode('admin-login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 focus:outline-none">
+            <i data-lucide="lock" class="h-3.5 w-3.5"></i>
+            Admin CMS
+          </button>
+        </div>
+
+        <!-- alert display -->
+        <div id="login-error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-xs font-bold mb-4 flex items-center gap-2"></div>
+
+        <!-- PANES -->
+        
+        <!-- PANE 1: STUDENT LOGIN -->
+        <div id="student-login-pane" class="flex flex-col gap-4">
+          <form id="student-login-form" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Email Address</label>
+              <div class="relative">
+                <i data-lucide="mail" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="email" id="login-email" required placeholder="student@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Password</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="password" id="login-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Sign In to Student Portal
+            </button>
+            
+            <div class="text-center text-xs font-semibold text-slate-500 mt-2">
+              New student? <button type="button" onclick="showAuthMode('student-register')" class="text-primary-light hover:underline font-bold focus:outline-none">Register details</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANE 2: STUDENT REGISTER -->
+        <div id="student-register-pane" class="hidden flex flex-col gap-4">
+          <form id="student-register-form" class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Student Name</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="text" id="reg-name" required placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Email Address</label>
+              <div class="relative">
+                <i data-lucide="mail" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="email" id="reg-email" required placeholder="example@mail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-slate-700 uppercase">Mobile Number</label>
+              <div class="relative">
+                <i data-lucide="phone" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                <input type="tel" id="reg-phone" required maxLength="10" placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Target Class</label>
+                <select id="reg-class" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary">
+                  <option value="Class 9">Class 9</option>
+                  <option value="Class 10">Class 10</option>
+                  <option value="Class 11">Class 11</option>
+                  <option value="Class 12">Class 12</option>
+                  <option value="NEET Prep">Class 12</option> <!-- To match screenshot 2 'Class 12' default -->
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">School Name</label>
+                <div class="relative">
+                  <i data-lucide="school" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="text" id="reg-school" required placeholder="School name" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Password</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="password" id="reg-password" required placeholder="Password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-700 uppercase">Confirm Password</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="absolute left-3 top-2.5 text-slate-400 h-3.5 w-3.5"></i>
+                  <input type="password" id="reg-confirm-password" required placeholder="Retype password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold focus:outline-none focus:border-primary">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Register Student Account
+            </button>
+            
+            <div class="text-center text-xs font-semibold text-slate-500 mt-2">
+              Already have an account? <button type="button" onclick="showAuthMode('student-login')" class="text-primary-light hover:underline font-bold focus:outline-none">Login here</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANE 3: ADMIN LOGIN -->
+        <div id="admin-login-pane" class="hidden flex flex-col gap-4">
+          <form id="admin-login-form" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Username</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="text" id="admin-username" required placeholder="Enter username" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Password</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+                <input type="password" id="admin-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+                <button type="button" onclick="togglePasswordVisibility('admin-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-light transition-all flex items-center justify-center gap-1.5 mt-2 text-xs">
+              Sign In to CMS Portal
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>
