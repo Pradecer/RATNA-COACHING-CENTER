@@ -2136,7 +2136,7 @@ function renderStudentPortalPage() {
             <div id="profile-info-viewer" class="flex flex-col gap-4 text-xs">
               <div class="flex items-center gap-3">
                 <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div>
                   <span class="text-[10px] text-slate-400 font-bold block uppercase">Full Name</span>
@@ -2146,7 +2146,7 @@ function renderStudentPortalPage() {
 
               <div class="flex items-center gap-3">
                 <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 </div>
                 <div>
                   <span class="text-[10px] text-slate-400 font-bold block uppercase">Email Address</span>
@@ -2156,7 +2156,7 @@ function renderStudentPortalPage() {
 
               <div class="flex items-center gap-3">
                 <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 </div>
                 <div>
                   <span class="text-[10px] text-slate-400 font-bold block uppercase">Mobile Number</span>
@@ -2166,7 +2166,7 @@ function renderStudentPortalPage() {
 
               <div class="flex items-center gap-3">
                 <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-school"><path d="M12 22v-4"/><path d="M12 2v4"/><rect width="20" height="12" x="2" y="6" rx="2"/><path d="M12 12h.01"/><path d="M12 16h.01"/><path d="M8 12h.01"/><path d="M8 16h.01"/><path d="M16 12h.01"/><path d="M16 16h.01"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school"><path d="m22 10-6-4-6 4H4v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10Z"/><path d="M12 22v-9"/><path d="M2 10h20"/><path d="M14 14h-4v4h4v-4Z"/></svg>
                 </div>
                 <div>
                   <span class="text-[10px] text-slate-400 font-bold block uppercase">School / Institute</span>
@@ -3806,13 +3806,17 @@ window.deleteCmsMessage = async (id) => {
 function injectFloatingCTA() {
   const ctaHtml = `
     <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-      <!-- Call button (gold background, dark blue phone icon) -->
-      <a href="tel:+917011178381" class="h-14 w-14 rounded-full bg-accent text-[#0B2C6B] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer" title="Call Us">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <!-- WhatsApp button on top (bright green background, white official WhatsApp SVG icon) -->
+      <a href="https://wa.me/917011178381" target="_blank" class="h-14 w-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer" title="WhatsApp Chat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.528 2.019 14.07 1 11.5 1 6.136 1 1.777 5.358 1.774 10.787c-.001 1.758.465 3.473 1.35 5.006l-1.017 3.715 3.94-1.35zm12.56-5.834c-.312-.156-1.847-.91-2.133-1.014-.286-.105-.495-.156-.703.156-.208.312-.806 1.014-.988 1.222-.182.208-.364.234-.676.078-1.58-.797-2.615-1.393-3.66-3.189-.25-.43.25-.398.715-1.326.077-.156.039-.293-.02-.398-.058-.105-.495-1.194-.678-1.637-.178-.428-.36-.37-.495-.377-.128-.007-.275-.008-.423-.008-.148 0-.389.055-.593.277-.204.223-.78.761-.78 1.854 0 1.093.794 2.147.905 2.298.11.152 1.562 2.385 3.785 3.346 1.62.7 2.875.966 3.865.805.815-.132 2.502-1.023 2.85-2.012.348-.988.348-1.834.243-2.012-.104-.178-.312-.286-.624-.442z"/>
+        </svg>
       </a>
-      <!-- WhatsApp button (green background, white message bubble icon) -->
-      <a href="https://wa.me/917011178381" target="_blank" class="h-14 w-14 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer" title="WhatsApp Chat">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+      <!-- Call button on bottom (dark green background, 2px gold border, solid white phone receiver SVG icon) -->
+      <a href="tel:+917011178381" class="h-14 w-14 rounded-full bg-[#075E54] border-2 border-accent text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer" title="Call Us">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 15.5c-1.2 0-2.4-.2-3.6-.6-.3-.1-.7 0-1 .2l-2.2 2.2c-2.8-1.4-5.1-3.8-6.6-6.6l2.2-2.2c.3-.3.4-.7.2-1-.3-1.1-.5-2.3-.5-3.5 0-.6-.4-1-1-1H4c-.6 0-1 .4-1 1 0 9.4 7.6 17 17 17 .6 0 1-.4 1-1v-3.5c0-.6-.4-1-1-1z"/>
+        </svg>
       </a>
     </div>
   `;
