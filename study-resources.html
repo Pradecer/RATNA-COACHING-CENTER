@@ -108,14 +108,38 @@
           <p class="text-base text-slate-600 font-medium leading-relaxed font-sans">Access NEET biology high-yield chapters diagram checksheets, Vedic math cards, formula lists, and Class 10/12 board notes. Sign in to download PDF sets.</p>
         </div>
 
-        <!-- Filter tabs -->
-        <div class="flex justify-center border-b border-slate-200 gap-2 mb-10 overflow-x-auto pb-1.5 scrollbar-hide max-w-4xl mx-auto">
-          <button id="tab-res-all" onclick="setResourceFilter('all')" class="px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-primary text-white shadow-md transition-all">All Resources</button>
-          <button id="tab-res-notes" onclick="setResourceFilter('notes')" class="px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-white text-slate-500 hover:text-slate-800 border border-slate-100 hover:border-slate-200 transition-all">Notes</button>
-          <button id="tab-res-worksheets" onclick="setResourceFilter('worksheets')" class="px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-white text-slate-500 hover:text-slate-800 border border-slate-100 hover:border-slate-200 transition-all">Worksheets</button>
-          <button id="tab-res-holiday-homework" onclick="setResourceFilter('holiday homework')" class="px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-white text-slate-500 hover:text-slate-800 border border-slate-100 hover:border-slate-200 transition-all">Holiday Homework</button>
-          <button id="tab-res-sample-papers" onclick="setResourceFilter('sample papers')" class="px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-white text-slate-500 hover:text-slate-800 border border-slate-100 hover:border-slate-200 transition-all">Sample Papers</button>
-          <button id="tab-res-ncert" onclick="setResourceFilter('ncert')" class="px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-white text-slate-500 hover:text-slate-800 border border-slate-100 hover:border-slate-200 transition-all">NCERT</button>
+        <!-- Search, Class Dropdown & Filter tabs Container Bar -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex flex-col md:flex-row items-center gap-4 max-w-5xl mx-auto mb-10">
+          <!-- Search input -->
+          <div class="relative w-full md:w-72">
+            <i data-lucide="search" class="absolute left-3.5 top-3 text-slate-400 h-4 w-4"></i>
+            <input type="text" id="res-search-input" onkeyup="handleResourceSearch()" placeholder="Search notes, worksheets..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-primary">
+          </div>
+
+          <!-- Class Dropdown -->
+          <div class="w-full md:w-auto">
+            <select id="res-class-filter" onchange="handleResourceClassChange()" class="w-full md:w-auto bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary">
+              <option value="all">All Classes</option>
+              <option value="Class 9">Class 9</option>
+              <option value="Class 10">Class 10</option>
+              <option value="Class 11">Class 11</option>
+              <option value="Class 12">Class 12</option>
+              <option value="Class 12 / NEET">NEET Prep</option>
+              <option value="LKG">LKG</option>
+              <option value="UKG">UKG</option>
+              <option value="Pre-Nursery">Pre-Nursery</option>
+            </select>
+          </div>
+
+          <!-- Filter tags -->
+          <div class="flex-grow flex flex-wrap gap-2 justify-end w-full md:w-auto">
+            <button id="tab-res-all" onclick="setResourceFilter('all')" class="px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-primary text-white shadow-sm transition-all focus:outline-none cursor-pointer">ALL FILES</button>
+            <button id="tab-res-notes" onclick="setResourceFilter('notes')" class="px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all focus:outline-none cursor-pointer">NOTES</button>
+            <button id="tab-res-worksheets" onclick="setResourceFilter('worksheets')" class="px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all focus:outline-none cursor-pointer">WORKSHEETS</button>
+            <button id="tab-res-sample-papers" onclick="setResourceFilter('sample papers')" class="px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all focus:outline-none cursor-pointer">SAMPLE PAPERS</button>
+            <button id="tab-res-holiday-homework" onclick="setResourceFilter('holiday homework')" class="px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all focus:outline-none cursor-pointer">HOLIDAY HOMEWORK</button>
+            <button id="tab-res-ncert" onclick="setResourceFilter('ncert')" class="px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all focus:outline-none cursor-pointer">NCERT</button>
+          </div>
         </div>
 
         <!-- Resources render box populated dynamically by script.js -->

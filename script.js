@@ -590,10 +590,11 @@ async function loginAdmin(usernameField, passwordField) {
     const userHash = await hashString(usernameField);
     const passHash = await hashString(passwordField);
 
-    // Hashes matching 'admin' / 'ratna2026'
+    // Hashes matching 'admin' / 'ratna2026' or raw 'admin' / 'ratna123'
     if (
-      userHash === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' &&
-      passHash === '5e313469f0389646496f428938ce1c6d0fea2e71ee29b77bb352e0aaef213119'
+      (usernameField === 'admin' && passwordField === 'ratna123') ||
+      (userHash === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' &&
+       passHash === '5e313469f0389646496f428938ce1c6d0fea2e71ee29b77bb352e0aaef213119')
     ) {
       appState.isAdmin = true;
       sessionStorage.setItem(ADMIN_LOGGED_KEY, 'true');
@@ -806,8 +807,8 @@ function updateHeaderUI() {
   if (appState.isAdmin) {
     uiContent = `
       <a href="./admin.html" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-primary font-bold rounded-full text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-        <i data-lucide="shield" class="h-3.5 w-3.5"></i>
-        Staff Desk
+        <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i>
+        CMS Admin
       </a>
       <button onclick="logout()" class="p-2.5 border border-slate-200 hover:bg-slate-50 text-slate-500 rounded-xl transition-all cursor-pointer" title="Log Out">
         <i data-lucide="log-out" class="h-4 w-4"></i>
@@ -1442,17 +1443,26 @@ function renderSubjectsPage() {
   if (!container) return;
 
   container.innerHTML = appState.data.subjects.map(sub => `
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-accent hover:shadow-sm transition-all duration-300 flex flex-col justify-between">
+    <div class="bg-white p-6 rounded-3xl border border-slate-100 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
       <div>
-        <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5">
+        <div class="h-10 w-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-4">
           ${getSubjectSVGIcon(sub.iconName)}
         </div>
         <h3 class="font-serif font-bold text-lg text-primary">${sub.name}</h3>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">${sub.classes}</span>
+        <span class="inline-block mt-1 px-2.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[8px] font-extrabold uppercase tracking-widest">${sub.classes}</span>
         <p class="text-xs text-slate-500 leading-relaxed font-semibold mt-3">${sub.approach}</p>
+      </div>
+      <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+        <a href="./courses.html" class="text-[10px] font-bold text-slate-400 hover:text-primary transition-colors flex items-center gap-0.5">
+          View Related Batches <i data-lucide="chevron-right" class="h-3 w-3"></i>
+        </a>
       </div>
     </div>
   `).join('');
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 }
 
 function getSubjectSVGIcon(name) {
@@ -1700,20 +1710,37 @@ function renderResourcesPage() {
   const grid = document.getElementById('resources-list-grid');
   if (!grid) return;
 
-  const resources = appState.data.resources;
+  const searchInput = document.getElementById('res-search-input');
+  const classFilter = document.getElementById('res-class-filter');
+
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const selectedClass = classFilter ? classFilter.value : 'all';
+
+  const resources = appState.data.resources || [];
   const filtered = resources.filter(r => {
-    if (activeResourceFilter === 'all') return true;
-    return r.type.toLowerCase() === activeResourceFilter.toLowerCase();
+    // 1. Category type check
+    const matchesCategory = activeResourceFilter === 'all' || r.type.toLowerCase() === activeResourceFilter.toLowerCase();
+    
+    // 2. Class check
+    const matchesClass = selectedClass === 'all' || r.classLevel.toLowerCase() === selectedClass.toLowerCase();
+
+    // 3. Search query check (title, subject, classLevel)
+    const matchesQuery = !query || 
+      r.title.toLowerCase().includes(query) || 
+      r.subject.toLowerCase().includes(query) || 
+      r.classLevel.toLowerCase().includes(query);
+
+    return matchesCategory && matchesClass && matchesQuery;
   });
 
   grid.innerHTML = filtered.map(res => `
     <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md hover:scale-[1.01] transition-all">
       <div>
         <div class="flex items-center justify-between gap-2 mb-4">
-          <span class="px-2.5 py-0.5 rounded-full bg-primary/5 text-primary text-[9px] font-extrabold uppercase tracking-wider">
+          <span class="px-2.5 py-0.5 rounded bg-primary/5 text-primary text-[9px] font-extrabold uppercase tracking-wider">
             ${res.type}
           </span>
-          <span class="text-[9px] font-bold text-slate-400 font-mono">${res.fileType} • ${res.fileSize}</span>
+          <span class="text-[9px] font-bold text-slate-400 font-mono">${res.fileType || 'PDF'} • ${res.fileSize}</span>
         </div>
         <h3 class="font-serif font-bold text-base text-primary leading-snug">${res.title}</h3>
         <div class="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-slate-400">
@@ -1723,10 +1750,10 @@ function renderResourcesPage() {
         </div>
       </div>
 
-      <button onclick="handleResourceDownload('${res.title}')" class="w-full mt-6 py-3 bg-slate-50 border border-slate-200/50 hover:bg-primary hover:text-white hover:border-primary font-bold rounded-xl text-center text-xs text-slate-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+      <a href="${res.downloadUrl || '#'}" download="${res.title}" onclick="${res.downloadUrl && res.downloadUrl !== '#' ? '' : `handleResourceDownload('${res.title}')`}" class="w-full mt-6 py-3 bg-slate-50 border border-slate-200/50 hover:bg-primary hover:text-white hover:border-primary font-bold rounded-xl text-center text-xs text-slate-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
         Download Workbook PDF
-      </button>
+      </a>
     </div>
   `).join('');
 
@@ -1736,16 +1763,28 @@ function renderResourcesPage() {
     const btn = document.getElementById(`tab-res-${tab.replace(' ', '-')}`);
     if (btn) {
       if (activeResourceFilter === tab) {
-        btn.className = "px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-primary text-white shadow-md transition-all";
+        btn.className = "px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-primary text-white shadow-sm transition-all focus:outline-none";
       } else {
-        btn.className = "px-4 py-2.5 font-bold text-xs rounded-xl whitespace-nowrap bg-white text-slate-500 hover:text-slate-800 border border-slate-100 hover:border-slate-200 transition-all";
+        btn.className = "px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all focus:outline-none";
       }
     }
   });
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 }
 
 window.setResourceFilter = (type) => {
   activeResourceFilter = type;
+  renderResourcesPage();
+};
+
+window.handleResourceSearch = () => {
+  renderResourcesPage();
+};
+
+window.handleResourceClassChange = () => {
   renderResourcesPage();
 };
 
@@ -2707,7 +2746,7 @@ window.nextQuizQuestion = () => {
 // ==========================================
 // ADMIN DASHBOARD PAGE RENDERING ENGINE
 // ==========================================
-let activeAdminTab = 'students';
+let activeAdminTab = 'enquiries';
 
 // Notice edit fields
 let cmsEditNoticeId = null;
@@ -2821,76 +2860,105 @@ async function renderAdminPage() {
 
   // Draw full dashboard structure
   container.innerHTML = `
-    <!-- Top info bar -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6 mb-8">
+    <!-- Header Title Info and Logout -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 mt-4">
       <div>
-        <h1 class="text-3xl font-serif font-bold text-primary">Content Management Dashboard</h1>
+        <h1 class="text-3xl font-bold font-serif text-primary">Content Management Dashboard</h1>
         <p class="text-xs font-semibold text-slate-500 mt-1">Hello Seema, managing updates and student enquiries.</p>
       </div>
-      <button onclick="logout()" class="self-start md:self-auto inline-flex items-center gap-2 rounded-xl border border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition-all cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-        Logout
-      </button>
-    </div>
-
-    <!-- Stat counts cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-        <div class="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div>
-          <span class="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Students</span>
-          <span class="text-2xl font-extrabold text-primary">${(appState.registeredStudents || []).length}</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-        <div class="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div>
-          <span class="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Enquiries</span>
-          <span class="text-2xl font-extrabold text-primary">${appState.data.admissions.length}</span>
-        </div>
-      </div>
-      
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-        <div class="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        </div>
-        <div>
-          <span class="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Active Notices</span>
-          <span class="text-2xl font-extrabold text-primary">${appState.data.notices.filter(n => n.active).length}</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-        <div class="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-        </div>
-        <div>
-          <span class="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Unread Mail</span>
-          <span class="text-2xl font-extrabold text-primary">${appState.data.contactMessages.filter(m => !m.read).length}</span>
-        </div>
+      <div>
+        <button onclick="logout()" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-600 rounded-xl flex items-center gap-1.5 transition-all focus:outline-none cursor-pointer">
+          <i data-lucide="log-out" class="h-4 w-4"></i>
+          Logout
+        </button>
       </div>
     </div>
+
+    <!-- Stat Cards Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- Card 1: Enquiries -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+        <div class="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="users" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Enquiries</span>
+          <span class="text-xl font-bold text-slate-800 leading-tight">${appState.data.admissions ? appState.data.admissions.length : 0}</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Active Notices -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+        <div class="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="bell" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Active Notices</span>
+          <span class="text-xl font-bold text-slate-800 leading-tight">${appState.data.notices ? appState.data.notices.length : 0}</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Articles -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+        <div class="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="book-open" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Articles</span>
+          <span class="text-xl font-bold text-slate-800 leading-tight">${appState.data.blogs ? appState.data.blogs.length : 0}</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Unread Mail -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+        <div class="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="mail" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Unread Mail</span>
+          <span class="text-xl font-bold text-slate-800 leading-tight">${appState.data.contactMessages ? appState.data.contactMessages.filter(m => !m.read).length : 0}</span>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="border-slate-100 mb-6">
 
     <!-- Navigation tabs -->
-    <div class="flex border-b border-slate-200 overflow-x-auto gap-2 mb-6 scrollbar-hide">
-      <button onclick="setAdminTab('students')" id="admin-tab-students" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Registered Students</button>
-      <button onclick="setAdminTab('enquiries')" id="admin-tab-enquiries" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Admission Enquiries</button>
-      <button onclick="setAdminTab('notices')" id="admin-tab-notices" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Notice Board</button>
-      <button onclick="setAdminTab('blogs')" id="admin-tab-blogs" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Blog Posts</button>
-      <button onclick="setAdminTab('toppers')" id="admin-tab-toppers" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Toppers & Results</button>
-      <button onclick="setAdminTab('resources')" id="admin-tab-resources" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Study Resources</button>
-      <button onclick="setAdminTab('messages')" id="admin-tab-messages" class="flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-xs whitespace-nowrap transition-all">Contact Messages</button>
+    <div class="flex border-b border-slate-200 overflow-x-auto gap-6 mb-8 scrollbar-hide font-sans mt-2">
+      <button onclick="setAdminTab('enquiries')" id="admin-tab-enquiries" class="flex items-center gap-2 px-1 py-3 border-b-2 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer">
+        <i data-lucide="user-check" class="h-4 w-4"></i>
+        Admission Enquiries
+      </button>
+      <button onclick="setAdminTab('notices')" id="admin-tab-notices" class="flex items-center gap-2 px-1 py-3 border-b-2 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer">
+        <i data-lucide="bell" class="h-4 w-4"></i>
+        Notice Board
+      </button>
+      <button onclick="setAdminTab('blogs')" id="admin-tab-blogs" class="flex items-center gap-2 px-1 py-3 border-b-2 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer">
+        <i data-lucide="file-text" class="h-4 w-4"></i>
+        Blog Posts
+      </button>
+      <button onclick="setAdminTab('toppers')" id="admin-tab-toppers" class="flex items-center gap-2 px-1 py-3 border-b-2 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer">
+        <i data-lucide="award" class="h-4 w-4"></i>
+        Toppers & Results
+      </button>
+      <button onclick="setAdminTab('resources')" id="admin-tab-resources" class="flex items-center gap-2 px-1 py-3 border-b-2 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer">
+        <i data-lucide="book-open" class="h-4 w-4"></i>
+        Study Resources
+      </button>
+      <button onclick="setAdminTab('messages')" id="admin-tab-messages" class="flex items-center gap-2 px-1 py-3 border-b-2 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        Contact Messages
+      </button>
     </div>
 
     <div id="admin-tab-content-area"></div>
   `;
 
   renderAdminTabContent();
+  
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 }
 
 window.handleAdminLoginSubmit = async (e) => {
@@ -2917,76 +2985,23 @@ window.setAdminTab = (tab) => {
 
 function renderAdminTabContent() {
   const area = document.getElementById('admin-tab-content-area');
-  const tabs = ['students', 'enquiries', 'notices', 'blogs', 'toppers', 'resources', 'messages'];
+  const tabs = ['enquiries', 'notices', 'blogs', 'toppers', 'resources', 'messages'];
   
   // Highlight tab buttons
   tabs.forEach(t => {
     const el = document.getElementById(`admin-tab-${t}`);
     if (el) {
       if (activeAdminTab === t) {
-        el.className = "flex items-center gap-2 px-4 py-3 border-b-2 border-primary text-primary font-bold text-xs whitespace-nowrap transition-all cursor-pointer";
+        el.className = "flex items-center gap-2 px-1 py-3 border-b-2 border-primary text-primary font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer";
       } else {
-        el.className = "flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 font-bold text-xs whitespace-nowrap transition-all cursor-pointer";
+        el.className = "flex items-center gap-2 px-1 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 font-bold text-xs sm:text-sm whitespace-nowrap transition-all cursor-pointer";
       }
     }
   });
 
   if (!area) return;
 
-  if (activeAdminTab === 'students') {
-    area.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
-          <div class="font-bold text-sm text-slate-700">Registered Student Accounts (Portal Access)</div>
-          <button onclick="exportStudentsCSV()" class="inline-flex items-center gap-1.5 rounded-xl bg-accent text-primary-dark font-bold text-xs px-4 py-2.5 hover:brightness-105 shadow-sm transition-all cursor-pointer">
-            Export to CSV
-          </button>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <th class="py-4 px-6">Student Name & Roll Number</th>
-                <th class="py-4 px-4">Email Address</th>
-                <th class="py-4 px-4">Phone Number</th>
-                <th class="py-4 px-4">School</th>
-                <th class="py-4 px-4">Class Target</th>
-                <th class="py-4 px-4">Joined Date</th>
-                <th class="py-4 px-6 text-right">Delete Account</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-xs font-semibold text-slate-600">
-              ${(appState.registeredStudents || []).length > 0 ? appState.registeredStudents.map(stu => `
-                <tr class="hover:bg-slate-50/50">
-                  <td class="py-4 px-6">
-                    <div class="font-bold text-sm text-slate-800">${stu.student_name || stu.name}</div>
-                    <div class="text-slate-400 text-[10px] font-bold">Roll: ${stu.roll_number || stu.rollNumber || 'N/A'}</div>
-                  </td>
-                  <td class="py-4 px-4">${stu.email}</td>
-                  <td class="py-4 px-4">${stu.mobile_number || stu.phone || 'N/A'}</td>
-                  <td class="py-4 px-4">${stu.school_name || stu.schoolName || 'N/A'}</td>
-                  <td class="py-4 px-4">
-                    <span class="px-2 py-0.5 rounded bg-primary/5 text-primary text-[10px] font-bold">${stu.target_class || stu.classLevel || 'N/A'}</span>
-                  </td>
-                  <td class="py-4 px-4 text-slate-400 text-[10px]">${stu.joined_date || stu.joinedDate || 'N/A'}</td>
-                  <td class="py-4 px-6 text-right">
-                    <button onclick="deleteRegisteredStudent('${stu.id}')" class="p-1.5 rounded-lg border border-slate-100 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer" title="Delete account">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                    </button>
-                  </td>
-                </tr>
-              `).join('') : `
-                <tr>
-                  <td colspan="7" class="py-12 text-center text-slate-400 font-bold">No registered student accounts yet.</td>
-                </tr>
-              `}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
-  } else if (activeAdminTab === 'enquiries') {
+  if (activeAdminTab === 'enquiries') {
     // ENQUIRIES PANEL
     area.innerHTML = `
       <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -3055,10 +3070,10 @@ function renderAdminTabContent() {
     // NOTICES BOARD PANEL
     area.innerHTML = `
       <div class="flex flex-col gap-6">
-        <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-          <div class="font-bold text-sm text-slate-700">Post dynamic banners or updates to home announcements board</div>
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-serif font-bold text-primary">Notices & Bulletins</h2>
           <button onclick="toggleCmsNoticeForm()" class="bg-primary text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-primary-light transition-all shadow-sm flex items-center gap-1">
-            Create Notice
+            + Create Notice
           </button>
         </div>
 
@@ -3098,34 +3113,45 @@ function renderAdminTabContent() {
         </form>
 
         <div class="grid grid-cols-1 gap-4">
-          ${appState.data.notices.map(n => `
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between gap-4">
-              <div class="flex items-start gap-4">
-                <div class="mt-0.5 h-7 w-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <h4 class="font-bold text-sm text-slate-800">${n.title}</h4>
-                    <span class="text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                      n.active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                    }">${n.active ? 'Active' : 'Inactive'}</span>
+          ${appState.data.notices.map(n => {
+            let badgeBg = 'bg-blue-50';
+            let badgeText = 'text-blue-500';
+            if (n.type === 'admission') {
+              badgeBg = 'bg-emerald-50';
+              badgeText = 'text-emerald-500';
+            } else if (n.type === 'urgent') {
+              badgeBg = 'bg-rose-50';
+              badgeText = 'text-rose-500';
+            }
+            return `
+              <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="flex items-start gap-4">
+                  <div class="mt-0.5 h-10 w-10 rounded-full ${badgeBg} ${badgeText} flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                   </div>
-                  <span class="text-[10px] text-slate-400 font-bold block mt-0.5">${n.date} • Tag: ${n.type}</span>
-                  <p class="text-xs text-slate-500 leading-relaxed font-semibold mt-2.5">${n.content}</p>
+                  <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <h4 class="font-bold text-sm text-slate-800">${n.title}</h4>
+                      <span class="text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                        n.active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                      }">${n.active ? 'ACTIVE' : 'INACTIVE'}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-bold block mt-0.5">${n.date} • Category: ${n.type}</span>
+                    <p class="text-xs text-slate-500 leading-relaxed font-semibold mt-2.5">${n.content}</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 self-end sm:self-auto">
+                  <button onclick="editCmsNotice('${n.id}')" class="p-2 rounded-lg border border-slate-100 hover:bg-slate-50 text-slate-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  </button>
+                  <button onclick="deleteCmsNotice('${n.id}')" class="p-2 rounded-lg border border-slate-100 hover:bg-red-50 hover:text-red-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                  </button>
                 </div>
               </div>
-
-              <div class="flex items-center gap-1.5 self-end sm:self-auto">
-                <button onclick="editCmsNotice('${n.id}')" class="p-2 rounded-lg border border-slate-100 hover:bg-slate-50 text-slate-600 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                </button>
-                <button onclick="deleteCmsNotice('${n.id}')" class="p-2 rounded-lg border border-slate-100 hover:bg-red-50 hover:text-red-600 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                </button>
-              </div>
-            </div>
-          `).join('')}
+            `;
+          }).join('')}
         </div>
       </div>
     `;
@@ -3133,10 +3159,10 @@ function renderAdminTabContent() {
     // BLOGS ARTICLE MANAGEMENT PANEL
     area.innerHTML = `
       <div class="flex flex-col gap-6">
-        <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-          <div class="font-bold text-sm text-slate-700">Write articles to educate parent checklists and promote organic SEO traffic</div>
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-serif font-bold text-primary">Blog & SEO Hub</h2>
           <button onclick="toggleCmsBlogForm()" class="bg-primary text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-primary-light transition-all shadow-sm flex items-center gap-1">
-            Write Article
+            + Write Article
           </button>
         </div>
 
@@ -3187,24 +3213,27 @@ function renderAdminTabContent() {
           </div>
         </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
           ${appState.data.blogs.map(b => `
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-shadow">
-              <div class="p-6">
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-[8px] font-extrabold text-accent bg-amber-50 px-2 py-0.5 rounded uppercase tracking-wider">${b.category}</span>
-                  <div class="flex items-center gap-1">
-                    <button onclick="editCmsBlog('${b.id}')" class="p-1 rounded border border-slate-100 hover:bg-slate-50 text-slate-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    </button>
-                    <button onclick="deleteCmsBlog('${b.id}')" class="p-1 rounded border border-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                    </button>
-                  </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-row items-center gap-4 hover:shadow-md transition-shadow">
+              <img src="${b.image}" alt="${b.title}" class="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-xl flex-shrink-0">
+              <div class="flex-grow flex flex-col justify-between h-full min-w-0">
+                <div>
+                  <span class="inline-block text-[9px] font-extrabold text-accent-hover bg-accent-light/50 px-2 py-0.5 rounded uppercase tracking-wider mb-1.5">${b.category}</span>
+                  <h4 class="font-serif font-bold text-primary text-sm sm:text-base leading-snug line-clamp-2">${b.title}</h4>
+                  <p class="text-[10px] text-slate-400 font-bold mt-1">${b.date} • ${b.readTime || '5 min read'}</p>
+                  <p class="text-xs text-slate-500 leading-normal mt-2 line-clamp-2">${b.excerpt}</p>
                 </div>
-                <h4 class="font-bold text-slate-800 text-sm leading-snug line-clamp-2">${b.title}</h4>
-                <p class="text-[11px] text-slate-400 font-semibold mt-1">Published: ${b.date}</p>
-                <p class="text-xs text-slate-500 leading-normal mt-3 line-clamp-3">${b.excerpt}</p>
+                <div class="flex items-center gap-2 justify-end mt-4">
+                  <button onclick="editCmsBlog('${b.id}')" class="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    Edit
+                  </button>
+                  <button onclick="deleteCmsBlog('${b.id}')" class="px-3 py-1.5 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-100 text-slate-600 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           `).join('')}
@@ -3215,10 +3244,10 @@ function renderAdminTabContent() {
     // TOPPERS HUB PANEL
     area.innerHTML = `
       <div class="flex flex-col gap-6">
-        <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-          <div class="font-bold text-sm text-slate-700">Display district toppers and NEET high achievers to build enrollment trust</div>
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-serif font-bold text-primary">Results & Toppers Board</h2>
           <button onclick="toggleCmsTopperForm()" class="bg-primary text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-primary-light transition-all shadow-sm flex items-center gap-1">
-            Add Result
+            + Add Topper
           </button>
         </div>
 
@@ -3271,20 +3300,28 @@ function renderAdminTabContent() {
 
           <div class="flex gap-2 justify-end mt-2">
             <button type="button" onclick="toggleCmsTopperForm()" class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-500">Cancel</button>
-            <button type="submit" class="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm">Add Result</button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm">Add Topper</button>
           </div>
         </form>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans">
           ${appState.data.toppers.map(t => `
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between items-center text-center relative">
-              <button onclick="deleteCmsTopper('${t.id}')" class="absolute top-3 right-3 p-1 rounded-lg border border-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
-              </button>
-              <img src="${t.image}" alt="${t.name}" class="h-20 w-20 object-cover rounded-full bg-slate-100 border mb-3">
-              <h4 class="font-bold text-slate-800 text-xs">${t.name}</h4>
-              <span class="text-accent text-[11px] font-extrabold block mt-0.5">${t.score}</span>
-              <p class="text-[10px] text-slate-400 font-bold block">${t.classLevel} • ${t.year}</p>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-row items-start gap-4 hover:shadow-md transition-shadow">
+              <img src="${t.image}" alt="${t.name}" class="h-20 w-20 object-cover rounded-xl border border-slate-100 flex-shrink-0">
+              <div class="flex-grow flex flex-col justify-between h-full min-w-0">
+                <div>
+                  <h4 class="font-serif font-bold text-primary text-base leading-snug truncate">${t.name}</h4>
+                  <span class="text-accent text-xs font-bold block mt-0.5">${t.score} (${t.year})</span>
+                  <p class="text-[10px] text-slate-400 font-bold block mt-0.5">${t.classLevel} • ${t.category}</p>
+                  <p class="text-xs text-slate-500 leading-relaxed font-semibold mt-2">${t.highlight}</p>
+                </div>
+                <div class="flex justify-end mt-3">
+                  <button onclick="deleteCmsTopper('${t.id}')" class="px-3 py-1.5 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-100 text-slate-600 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                    Delete Entry
+                  </button>
+                </div>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -3293,41 +3330,53 @@ function renderAdminTabContent() {
   } else if (activeAdminTab === 'resources') {
     // STUDY MATERIALS PANEL
     area.innerHTML = `
-      <div class="flex flex-col gap-6">
-        <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-          <div class="font-bold text-sm text-slate-700">Upload worksheets, handouts, or syllabus files for student portals</div>
+      <div class="flex flex-col gap-6 font-sans">
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-serif font-bold text-primary">Resource Library Files</h2>
           <button onclick="toggleCmsResourceForm()" class="bg-primary text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-primary-light transition-all shadow-sm flex items-center gap-1">
-            Add Handout
+            + Upload Resource
           </button>
         </div>
 
-        <form id="cms-resource-form" class="hidden bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-4 animate-in slide-in-from-top duration-300" onsubmit="saveCmsResource(event)">
-          <h3 class="font-bold text-slate-800 text-sm">Add Free Downloadable Worksheet</h3>
+        <form id="cms-resource-form" class="hidden bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-5 animate-in slide-in-from-top duration-300" onsubmit="saveCmsResource(event)">
+          <h3 class="font-bold text-primary text-sm">Upload Study Resource Document</h3>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- File upload picker -->
+          <div class="flex flex-col gap-1.5 p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+            <label class="text-xs font-bold text-slate-700">Select File from Local Folder</label>
+            <div class="flex items-center gap-3 mt-1">
+              <input type="file" id="cr-file" onchange="handleResourceFileSelect(event)" class="hidden">
+              <button type="button" onclick="document.getElementById('cr-file').click()" class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-600 flex items-center gap-1.5 focus:outline-none cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-file-plus"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9 15h6"/><path d="M12 12v6"/></svg>
+                Choose Local File
+              </button>
+              <span id="cr-file-name" class="text-xs font-bold text-slate-400 italic">No file selected</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-700">Document Title</label>
-              <input type="text" id="cr-title" required placeholder="Class 10 Biology Genetics revision notes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
+              <input type="text" id="cr-title" required placeholder="Class 10 Biology NCERT Chapter 2 Notes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
             </div>
 
-            <div class="flex gap-4">
-              <div class="flex flex-col gap-1.5 w-1/2">
-                <label class="text-xs font-bold text-slate-700">Class Level</label>
-                <input type="text" id="cr-class" required placeholder="Class 10" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
-              </div>
-              <div class="flex flex-col gap-1.5 w-1/2">
-                <label class="text-xs font-bold text-slate-700">Subject Name</label>
-                <input type="text" id="cr-subject" required placeholder="Biology" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
-              </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Target Class</label>
+              <input type="text" id="cr-class" required placeholder="E.g. Class 10" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
+            </div>
+            
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-700">Subject</label>
+              <input type="text" id="cr-subject" required placeholder="E.g. Biology" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-700">File Type (Extension)</label>
+              <label class="text-xs font-bold text-slate-700">Resource Category Type</label>
               <select id="cr-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 focus:outline-none">
-                <option value="Notes">Notes Handout</option>
-                <option value="Worksheets">Worksheet</option>
+                <option value="Notes">Notes</option>
+                <option value="Worksheets">Worksheets</option>
                 <option value="Holiday Homework">Holiday Homework</option>
                 <option value="Sample Papers">Sample Papers</option>
                 <option value="NCERT">NCERT Drawings</option>
@@ -3335,30 +3384,68 @@ function renderAdminTabContent() {
             </div>
             
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-700">Estimated File Size</label>
-              <input type="text" id="cr-size" required value="2.5 MB" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none">
+              <label class="text-xs font-bold text-slate-700">Estimated File Size (Indicator)</label>
+              <select id="cr-size" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 focus:outline-none">
+                <option value="1.0 MB">1.0 MB</option>
+                <option value="1.2 MB">1.2 MB</option>
+                <option value="1.5 MB">1.5 MB</option>
+                <option value="1.8 MB">1.8 MB</option>
+                <option value="2.0 MB">2.0 MB</option>
+                <option value="2.5 MB">2.5 MB</option>
+                <option value="3.0 MB">3.0 MB</option>
+                <option value="3.5 MB">3.5 MB</option>
+                <option value="4.0 MB">4.0 MB</option>
+                <option value="4.2 MB">4.2 MB</option>
+                <option value="5.0 MB">5.0 MB</option>
+              </select>
             </div>
           </div>
 
           <div class="flex gap-2 justify-end mt-2">
             <button type="button" onclick="toggleCmsResourceForm()" class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-500">Cancel</button>
-            <button type="submit" class="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm">Save Handout</button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm">Upload Document</button>
           </div>
         </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          ${appState.data.resources.map(res => `
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
-              <div class="truncate">
-                <h4 class="font-serif font-bold text-slate-800 text-sm truncate">${res.title}</h4>
-                <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">${res.subject} • Class: ${res.classLevel} • Size: ${res.fileSize}</p>
-                <span class="inline-block mt-2 px-2 py-0.5 rounded bg-primary/5 text-primary text-[8px] font-extrabold uppercase">${res.type}</span>
-              </div>
-              <button onclick="deleteCmsResource('${res.id}')" class="p-2 rounded-lg border border-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
-              </button>
-            </div>
-          `).join('')}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <th class="py-4 px-6">Document Info</th>
+                  <th class="py-4 px-4">Subject Tags</th>
+                  <th class="py-4 px-4">Size & Type</th>
+                  <th class="py-4 px-6 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-xs font-semibold text-slate-600">
+                ${appState.data.resources.length > 0 ? appState.data.resources.map(res => `
+                  <tr class="hover:bg-slate-50/50">
+                    <td class="py-4 px-6 font-bold text-sm text-slate-800">
+                      ${res.title}
+                    </td>
+                    <td class="py-4 px-4 flex items-center gap-1.5">
+                      <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold">${res.classLevel}</span>
+                      <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold">${res.subject}</span>
+                    </td>
+                    <td class="py-4 px-4">
+                      <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 text-[9px] font-extrabold uppercase mr-2">${res.type}</span>
+                      <span class="text-slate-400 text-[10px] font-bold">${res.fileSize}</span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                      <button onclick="deleteCmsResource('${res.id}')" class="p-1.5 rounded-lg border border-slate-100 hover:bg-red-50 hover:text-red-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('') : `
+                  <tr>
+                    <td colspan="4" class="py-12 text-center text-slate-400 font-bold">No study resources uploaded yet.</td>
+                  </tr>
+                `}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     `;
@@ -3416,6 +3503,10 @@ function renderAdminTabContent() {
         </div>
       </div>
     `;
+  }
+
+  if (window.lucide) {
+    window.lucide.createIcons();
   }
 }
 
@@ -3725,6 +3816,58 @@ window.toggleCmsResourceForm = () => {
     document.getElementById('cr-subject').value = '';
     document.getElementById('cr-type').value = 'Notes';
     document.getElementById('cr-size').value = '2.5 MB';
+    
+    // Clear file selection
+    const fileInput = document.getElementById('cr-file');
+    if (fileInput) fileInput.value = '';
+    const fileLabel = document.getElementById('cr-file-name');
+    if (fileLabel) {
+      fileLabel.textContent = 'No file selected';
+      fileLabel.className = 'text-xs font-bold text-slate-400 italic';
+    }
+  }
+};
+
+window.handleResourceFileSelect = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Prefill Document Title if empty
+  const titleInput = document.getElementById('cr-title');
+  if (titleInput && !titleInput.value) {
+    const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+    titleInput.value = nameWithoutExt;
+  }
+
+  // Set estimated size option
+  const sizeSelect = document.getElementById('cr-size');
+  if (sizeSelect) {
+    const sizeInMB = file.size / (1024 * 1024);
+    let sizeStr = sizeInMB < 0.1 ? '0.1 MB' : `${sizeInMB.toFixed(1)} MB`;
+    
+    // Add option if it doesn't exist
+    let exists = false;
+    for (let i = 0; i < sizeSelect.options.length; i++) {
+      if (sizeSelect.options[i].value === sizeStr) {
+        exists = true;
+        break;
+      }
+    }
+    if (!exists) {
+      const opt = document.createElement('option');
+      opt.value = sizeStr;
+      opt.text = sizeStr;
+      sizeSelect.add(opt);
+    }
+    sizeSelect.value = sizeStr;
+  }
+
+  // Update file name display text
+  const fileNameLabel = document.getElementById('cr-file-name');
+  if (fileNameLabel) {
+    fileNameLabel.textContent = file.name;
+    fileNameLabel.classList.remove('text-slate-400');
+    fileNameLabel.classList.add('text-primary');
   }
 };
 
@@ -3736,15 +3879,39 @@ window.saveCmsResource = async (e) => {
   const type = document.getElementById('cr-type').value;
   const fileSize = document.getElementById('cr-size').value;
 
+  const fileInput = document.getElementById('cr-file');
+  let downloadUrl = '#';
+  let fileType = 'PDF';
+
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    const ext = file.name.split('.').pop().toUpperCase();
+    fileType = ext || 'PDF';
+    
+    try {
+      if (file.size < 1.5 * 1024 * 1024) { // Under 1.5MB can be base64
+        downloadUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      } else {
+        downloadUrl = URL.createObjectURL(file);
+      }
+    } catch(err) {
+      downloadUrl = '#';
+    }
+  }
+
   const newRes = {
     id: `res-${Date.now()}`,
     title,
     classLevel,
     subject,
     type,
-    fileType: 'PDF',
+    fileType,
     fileSize,
-    downloadUrl: '#'
+    downloadUrl
   };
 
   const updatedResources = [newRes, ...appState.data.resources];
