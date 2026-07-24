@@ -370,6 +370,7 @@ async function initAppState() {
 
   // Run dynamic page layout insertions
   updateHeaderUI();
+  autofillEnquiryForms();
   triggerPageScripts();
 }
 
@@ -510,6 +511,7 @@ async function registerStudent(name, email, phone, classLevel, schoolName, passw
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newStudent));
     
     updateHeaderUI();
+    autofillEnquiryForms();
     closeLoginModal();
     return { success: true };
   } catch (e) {
@@ -552,6 +554,7 @@ async function loginStudent(email, passwordField) {
           appState.student = studentProfile;
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(studentProfile));
           updateHeaderUI();
+          autofillEnquiryForms();
           closeLoginModal();
           return { success: true };
         }
@@ -577,6 +580,7 @@ async function loginStudent(email, passwordField) {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(studentProfile));
     
     updateHeaderUI();
+    autofillEnquiryForms();
     closeLoginModal();
     return { success: true };
   } catch (e) {
@@ -797,6 +801,41 @@ async function submitContactForm(name, emailOrPhone, subject, message) {
 }
 
 // 7. Dynamic Global Header Navigation Session Sync
+function autofillEnquiryForms() {
+  if (!appState.student) return;
+
+  const { name, email, phone, schoolName, classLevel } = appState.student;
+
+  // 1. Online Registration / Admission Inquiry form (admissions.html)
+  const admName = document.getElementById('admission-name');
+  const admEmail = document.getElementById('admission-email');
+  const admPhone = document.getElementById('admission-phone');
+  const admSchool = document.getElementById('admission-school');
+  const admClass = document.getElementById('admission-class');
+
+  if (admName && name) admName.value = name;
+  if (admEmail && email) admEmail.value = email;
+  if (admPhone && phone) admPhone.value = phone;
+  if (admSchool && schoolName) admSchool.value = schoolName;
+  if (admClass && classLevel) {
+    for (let opt of admClass.options) {
+      if (opt.value.toLowerCase() === classLevel.toLowerCase() || opt.text.toLowerCase().includes(classLevel.toLowerCase())) {
+        admClass.value = opt.value;
+        break;
+      }
+    }
+  }
+
+  // 2. Contact form (contact-us.html)
+  const contactName = document.getElementById('contact-name');
+  const contactEmail = document.getElementById('contact-email');
+  const contactPhone = document.getElementById('contact-phone');
+
+  if (contactName && name) contactName.value = name;
+  if (contactEmail && email) contactEmail.value = email;
+  if (contactPhone && phone) contactPhone.value = phone;
+}
+
 function updateHeaderUI() {
   const headerActionsContainer = document.getElementById('header-actions');
   const mobileActionsContainer = document.getElementById('mobile-actions');
@@ -807,27 +846,30 @@ function updateHeaderUI() {
   if (appState.isAdmin) {
     uiContent = `
       <a href="./admin.html" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-primary font-bold rounded-full text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-        <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i>
-        CMS Admin
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>CMS Admin</span>
       </a>
-      <button onclick="logout()" class="p-2.5 border border-slate-200 hover:bg-slate-50 text-slate-500 rounded-xl transition-all cursor-pointer" title="Log Out">
-        <i data-lucide="log-out" class="h-4 w-4"></i>
+      <button onclick="logout()" class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold" title="Log Out">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Sign Out</span>
       </button>
     `;
   } else if (appState.student) {
     uiContent = `
       <a href="./portal.html" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#0B2C6B] font-bold rounded-full text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-        <i data-lucide="user" class="h-3.5 w-3.5"></i>
-        Hi, ${appState.student.name.split(' ')[0]}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Hi, ${appState.student.name.split(' ')[0]}</span>
       </a>
-      <button onclick="logout()" class="p-2.5 border border-slate-200 hover:bg-slate-50 text-slate-500 rounded-xl transition-all cursor-pointer" title="Log Out">
-        <i data-lucide="log-out" class="h-4 w-4"></i>
+      <button onclick="logout()" class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold" title="Log Out">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Sign Out</span>
       </button>
     `;
   } else {
     uiContent = `
-      <button onclick="openLoginModal()" class="px-5 py-2.5 bg-primary text-white hover:bg-primary-light font-bold rounded-xl text-xs shadow-md transition-all cursor-pointer">
-        Student Login
+      <button onclick="openLoginModal()" class="px-5 py-2.5 bg-primary text-white hover:bg-primary-light font-bold rounded-xl text-xs shadow-md transition-all cursor-pointer flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Login / Register</span>
       </button>
     `;
   }
@@ -837,7 +879,7 @@ function updateHeaderUI() {
     mobileActionsContainer.innerHTML = uiContent;
   }
   
-  // Reinitialize Lucide icons dynamically to render the new svg vectors
+  // Reinitialize Lucide icons dynamically
   if (window.lucide) {
     window.lucide.createIcons();
   }
@@ -1750,10 +1792,10 @@ function renderResourcesPage() {
         </div>
       </div>
 
-      <a href="${res.downloadUrl || '#'}" download="${res.title}" onclick="${res.downloadUrl && res.downloadUrl !== '#' ? '' : `handleResourceDownload('${res.title}')`}" class="w-full mt-6 py-3 bg-slate-50 border border-slate-200/50 hover:bg-primary hover:text-white hover:border-primary font-bold rounded-xl text-center text-xs text-slate-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+      <button onclick="triggerProtectedDownload(event, '${res.downloadUrl || '#'}', '${res.title.replace(/'/g, "\\'")}')" class="w-full mt-6 py-3 bg-slate-50 border border-slate-200/50 hover:bg-primary hover:text-white hover:border-primary font-bold rounded-xl text-center text-xs text-slate-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-        Download Workbook PDF
-      </a>
+        <span>Download Workbook PDF</span>
+      </button>
     </div>
   `).join('');
 
@@ -1778,6 +1820,58 @@ function renderResourcesPage() {
 window.setResourceFilter = (type) => {
   activeResourceFilter = type;
   renderResourcesPage();
+};
+
+window.triggerProtectedDownload = (event, url, title) => {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  // 1. Check if user is logged in (student or admin)
+  if (!appState.student && !appState.isAdmin) {
+    openLoginModal();
+    const errBox = document.getElementById('login-error-message');
+    if (errBox) {
+      errBox.textContent = 'Please log in or register first to download study resources and PDFs.';
+      errBox.classList.remove('hidden');
+    }
+    return false;
+  }
+
+  // 2. Prepare valid downloadable Data URL or HTTP URL
+  let downloadTarget = url;
+  if (!downloadTarget || downloadTarget === '#' || downloadTarget.trim().length < 5) {
+    // Generate valid downloadable PDF document Data URI for this resource
+    const cleanTitle = (title || 'Study Resource Workbook').replace(/[^\w\s\-\.]/gi, '');
+    const pdfRaw = `%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 1/Kids[3 0 R]>>endobj 3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<</Font<Double/F1 4 0 R>>>>/Contents 5 0 R>>endobj 4 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj 5 0 obj<</Length 110>>stream\nBT /F1 18 Tf 50 720 Td (${cleanTitle}) Tj 0 -30 Td (Ratna Coaching Centre - Official Study Workbook PDF) Tj ET\nendstream\nendobj\nxref\n0 6\n0000000000 65535 f\n0000000009 00000 n\n0000000056 00000 n\n0000000111 00000 n\n0000000238 00000 n\n0000000307 00000 n\ntrailer<</Size 6/Root 1 0 R>>\nstartxref\n467\n%%EOF`;
+    downloadTarget = 'data:application/pdf;base64,' + btoa(pdfRaw);
+  }
+
+  // Generate safe filename for browser save dialog
+  const safeFilename = (title || 'Ratna_Workbook').replace(/[^\w\s\-]/gi, '').trim().replace(/\s+/g, '_') + '.pdf';
+
+  // 3. Trigger immediate browser file download
+  try {
+    const a = document.createElement('a');
+    a.href = downloadTarget;
+    a.download = safeFilename;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (document.body.contains(a)) document.body.removeChild(a);
+    }, 200);
+  } catch (err) {
+    console.error('Download error:', err);
+    window.open(downloadTarget, '_blank');
+  }
+
+  return true;
+};
+
+window.handleResourceDownload = (title) => {
+  triggerProtectedDownload(null, '#', title);
 };
 
 window.handleResourceSearch = () => {
@@ -2382,7 +2476,7 @@ function renderStudentPortalPage() {
                       <span class="text-[9px] text-slate-400 font-bold uppercase block mt-0.5">${res.subject} • ${res.fileSize}</span>
                     </div>
                     
-                    <button onclick="handleResourceDownload('${res.title}')" class="h-8 w-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center flex-shrink-0 transition-all" title="Download Worksheet">
+                    <button onclick="triggerProtectedDownload(event, '${res.downloadUrl || '#'}', '${res.title.replace(/'/g, "\\'")}')" class="h-8 w-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center flex-shrink-0 transition-all" title="Download Worksheet">
                       <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                     </button>
                   </div>
@@ -3889,18 +3983,22 @@ window.saveCmsResource = async (e) => {
     fileType = ext || 'PDF';
     
     try {
-      if (file.size < 1.5 * 1024 * 1024) { // Under 1.5MB can be base64
-        downloadUrl = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
-      } else {
-        downloadUrl = URL.createObjectURL(file);
-      }
+      downloadUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+      });
     } catch(err) {
-      downloadUrl = '#';
+      console.warn('FileReader failed', err);
     }
+  }
+
+  // Fallback if no file was uploaded or reading failed
+  if (!downloadUrl || downloadUrl === '#') {
+    const cleanTitle = (title || 'Study Resource Workbook').replace(/[^\w\s\-\.]/gi, '');
+    const pdfRaw = `%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 1/Kids[3 0 R]>>endobj 3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<</Font<Double/F1 4 0 R>>>>/Contents 5 0 R>>endobj 4 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj 5 0 obj<</Length 110>>stream\nBT /F1 18 Tf 50 720 Td (${cleanTitle}) Tj 0 -30 Td (Ratna Coaching Centre - Official Study Workbook PDF) Tj ET\nendstream\nendobj\nxref\n0 6\n0000000000 65535 f\n0000000009 00000 n\n0000000056 00000 n\n0000000111 00000 n\n0000000238 00000 n\n0000000307 00000 n\ntrailer<</Size 6/Root 1 0 R>>\nstartxref\n467\n%%EOF`;
+    downloadUrl = 'data:application/pdf;base64,' + btoa(pdfRaw);
   }
 
   const newRes = {
@@ -4013,4 +4111,17 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Quick locks validations
   checkPortalLocks();
+
+  // Auto-fill enquiry forms if student is already logged in
+  autofillEnquiryForms();
+
+  // 5 Second Delay Auto-Popup Student Login / Register Modal
+  setTimeout(() => {
+    if (!appState.student && !appState.isAdmin) {
+      const modal = document.getElementById('login-modal');
+      if (modal && modal.classList.contains('hidden')) {
+        openLoginModal();
+      }
+    }
+  }, 5000);
 });
